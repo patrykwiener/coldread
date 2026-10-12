@@ -305,3 +305,18 @@ The skill kept the migration and the 2 June cutover apart in 3 of 3 runs, agains
 - It passed 2 of the 3 texts without the skill. Both open with a claim the source does not make: that the 2 June cutover was the switch to a new system and the migration itself.
 
 The grader needs to say both things before this case can measure the rule.
+
+## 2026-10-12: the invented-claims grader, fixed
+
+The invented-claims grader of the rewrite case now says what the source supports and what it does not. A text may say that the idempotency layer or the deduplication brought the latency down, because the source says the deduplication yields that drop. A text fails if it says that the migration happened on 2 June, or that the cutover switched to a new system. The grader also reads only the rewritten text, not Claude's report around it. The case then ran again: 3 runs per arm, 4.1 minutes, $0.94 at list price.
+
+| Grader | With skill | Without |
+|---|---|---|
+| No invented claims | 2 of 3 | 0 of 3 |
+| Facts kept | 3 of 3 | 3 of 3 |
+| Plain words | 1 of 3 | 3 of 3 |
+| Reports what changed | 3 of 3 | 0 of 3 |
+| Case score | 75% | 50% |
+
+- All 3 texts without the skill open with a sentence such as "Since we switched over to the new system on 2 June", which merges the migration with the cutover. The grader now fails them. None of the 3 texts with the skill merges the two events. The third text with the skill failed the grader unanimously, and the votes do not say which claim the judge objected to.
+- Plain words fell from 3 of 3 to 1 of 3 with the skill. The two failed texts drop "leverages" and "robust" and explain idempotency, which is all the grader asks. The judge split its votes 1 to 2 in both, so this looks like judge noise.
