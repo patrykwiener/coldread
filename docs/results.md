@@ -377,3 +377,52 @@ What this run does not show:
 - How the rules hold up on cases from another author. One more caveat comes from this computer: its organisation-level instructions load into eval runs, and in one run they supplied surnames for two people the notes named by first name only.
 
 All runs in this section cost $32.53 at list price. That includes the first run of the changed skill and a baseline judged by Haiku.
+
+## 2026-10-12: the review and explainer rules, measured with Vale
+
+The run in the section above could not run Vale or most cold reads. This run measured the changed skill again on the first computer, where both run. Setup: Claude Code 2.1.296, the default agent model, Haiku as judge, 8 cases, 3 runs per arm and 3 runs at a time. The skill on main ran in a second worktree on the same 8 cases. It needed no arm without a skill, because the run of the changed skill has one. The run of the changed skill took 12.8 minutes and cost $9.57, the run of main 9.0 minutes and $6.45.
+
+The changed skill scored 90%, against 77% for the skill on main and 53% without a skill. The four new cases carry the gain, 83% against 57%. On the four older cases both versions stayed near the top, 96% against 98%. The last full run of those four, earlier today, gave 85% with the skill and 59% without it. Since then the rewrite case gained the rule on two names and a new grader, so that comparison is not clean.
+
+| Case | Skill on main | Changed skill | Without |
+|---|---|---|---|
+| write-review-comments-en | 60% | 100% | 50% |
+| write-explain-en | 50% | 100% | 33% |
+| write-design-notes-en | 50% | 100% | 60% |
+| write-pr-template-en | 67% | 33% | 89% |
+| write-pr-en | 100% | 100% | 78% |
+| write-rewrite-facts | 92% | 83% | 50% |
+| write-slack-pm-pl | 100% | 100% | 67% |
+| write-trigger-pl | 100% | 100% | 0% |
+| All cases | 77% | 90% | 53% |
+
+Vale ran. In each version, 23 of the 24 reports give a lint result, and the other one does not mention the lint at all. Each result was 0 warnings, except one review report that mentions two style suggestions, which the skill fixed.
+
+What improved, as runs passed out of 3 with the changed skill against the skill on main:
+
+- Review: comments of at most three sentences 3 against 0, and the nice-to-have kept out of GitHub 3 against 0.
+- Explainer: terms explained with examples 3 against 0, and one case followed from start to end 3 against 0.
+- Design doc: no date of the re-check 3 against 0, no path to the author's file 3 against 0, and nobody named as the one to decide 3 against 0.
+
+Where the changed skill scored lower, every failed text was read:
+
+- Template, 33% against 67%: most failures are the judge's. All three product sections name 09:00 UTC for users without a timezone, yet the judge failed two of them. It also failed a Tests section that keeps what ran apart from what did not. One failed text has nothing after its last section. The other two end with the attribution line "Generated with Claude Code" after the product section, which the grader counts as text after the last section. The skill on main did the same in one of its three texts.
+- Rewrite, 83% against 92%: one text failed "reports what changed", although its report lists what it removed and added. Another failed "no invented claims". It keeps the migration and the cutover apart, but says that duplicates "no longer occur", close to the sentence that Sonnet failed below.
+
+Both cases then ran again with Sonnet as judge, 3 runs per version with the skill, for $3.86:
+
+| Case | Skill on main | Changed skill |
+|---|---|---|
+| write-pr-template-en | 100% | 92% |
+| write-rewrite-facts | 83% | 75% |
+
+- Template: Sonnet accepted the attribution line after the last section. Its one failure is a product section that says users without a timezone get reminders "at the old time" instead of at 09:00 UTC. Over both judges, 5 of 6 product sections from the changed skill name that time, against 4 of 6 from the skill on main.
+- Rewrite: Sonnet failed 2 of 3 texts from main and 3 of 3 from the changed skill for the same kind of sentence. They say that the pipeline "no longer creates duplicates" or "no longer lets duplicates through", which makes the pipeline their cause, and the source does not say that. The one text that passed says the pipeline "removes duplicates reliably". Both versions share this weakness.
+
+What this run does not show:
+
+- Whether the sentence on trailers works. Over both judges, 3 of 6 template texts from each version end with the attribution line after the section that the template keeps last.
+- How these scores compare with the run on the second computer, because the judge and the lint differ.
+- How the rules hold up on cases from another author.
+
+All runs in this section cost $19.88 at list price.
