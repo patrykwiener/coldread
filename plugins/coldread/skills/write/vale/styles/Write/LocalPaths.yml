@@ -1,0 +1,14 @@
+extends: existence
+message: "'%s' is a path on your own machine, which the reader cannot open. State what they need from it, or attach the file."
+level: warning
+nonword: true
+# Raw scope, so a path inside backticks is caught too. A path that starts with
+# ~/ is left alone: instructions such as "edit ~/.config/app.toml" address the
+# reader's own machine. The last character is never punctuation, so a full stop
+# after a path is not part of it.
+scope: raw
+tokens:
+  - '/(?:Users|home)/[^/\s`''")\]]+/(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
+  - '/private/(?:tmp|var)/(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
+  - '/tmp/claude-(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
+  - '\b[A-Za-z]:\\Users\\(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'

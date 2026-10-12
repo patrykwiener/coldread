@@ -1,0 +1,12 @@
+extends: existence
+message: "'%s' says when you checked, not what holds. Tie the fact to a commit, a release or a named test run, unless the date itself matters."
+level: suggestion
+ignorecase: true
+# A verb of checking, up to five words, then "on" and a date: "re-checked the
+# staging numbers on 6 October". Also "as of" a date and "the review of" a date.
+tokens:
+  - '(?:re-?checked|checked|verified|reviewed|re-?tested|confirmed|parked)(?:\s+[\w''-]+){0,5}?\s+on\s+(?:\d{1,2}(?:st|nd|rd|th)?\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)\b(?:\s+\d{1,2}(?:st|nd|rd|th)?)?'
+  - '(?:re-?checked|checked|verified|reviewed|re-?tested|confirmed|parked)(?:\s+[\w''-]+){0,5}?\s+on\s+\d{4}-\d{2}-\d{2}'
+  - 'as of (?:\d{1,2}(?:st|nd|rd|th)?\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)\b'
+  - 'as of \d{4}-\d{2}-\d{2}'
+  - '(?:review|pass|session) of \d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December)\b'

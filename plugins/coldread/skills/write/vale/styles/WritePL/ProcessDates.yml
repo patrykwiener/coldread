@@ -1,0 +1,11 @@
+extends: existence
+message: "'%s' says when you checked, not what holds. Tie the fact to a commit, a release or a named test run, unless the date itself matters."
+level: suggestion
+ignorecase: true
+# A verb of checking, up to five words, then a date: "sprawdziłem ponownie
+# 6 października", "zweryfikowane na stagingu 6.10". Also "stan na" a date.
+tokens:
+  - '(?:sprawdz(?:on|ił|ał|ili|ały)\p{L}*|zweryfikowa\p{L}*|przejrza\p{L}*|przetestowa\p{L}*)(?:\s+[\p{L}-]+){0,5}?\s+(?:dnia\s+|w dniu\s+)?\d{1,2}(?:\.\d{1,2}(?:\.\d{2,4})?|\s+(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia))'
+  - '(?:sprawdz(?:on|ił|ał|ili|ały)\p{L}*|zweryfikowa\p{L}*)(?:\s+[\p{L}-]+){0,5}?\s+\d{4}-\d{2}-\d{2}'
+  - 'stan na (?:dzień\s+)?\d{1,2}(?:\.\d{1,2}(?:\.\d{2,4})?|\s+(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia))'
+  - 'stan na (?:dzień\s+)?\d{4}-\d{2}-\d{2}'
