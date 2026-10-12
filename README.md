@@ -4,7 +4,7 @@ coldread makes Claude Code write for a reader who was not in the session. Its wr
 
 ## Claude writes from inside the session
 
-Claude knows what its own working labels mean, and the reader does not. In the evals, Claude wrote a Slack message to a product manager from notes that mentioned `Phase A`, `option B` and `D3` without explaining them. Without coldread, at least one of these labels reached the manager in 6 of 6 attempts. With coldread, none did in 6 of 6. The writing skill cut them because the manager did not need them to decide, and it listed the cuts in its report.
+Claude knows what its own working labels mean, and the reader does not. In the evals, Claude wrote a Slack message to a product manager from notes that mentioned `Phase A`, `option B` and `D3` without explaining them. Without coldread, at least one of these labels reached the manager in 9 of 9 attempts. With coldread, none did in 9 of 9. The writing skill cut them because the manager did not need them to decide, and it listed the cuts in its report.
 
 ## What you get
 
@@ -29,7 +29,7 @@ With the chat rules, also add a `## About me` section to `~/.claude/CLAUDE.md` t
 
 ## What the evals show
 
-Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In one suite run of 4 writing cases, `/coldread:write` passed 76% against about 50%, without its Vale step. Each text cost about three times as much.
+Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 4 writing cases, `/coldread:write` passed 85% against 59% without it. Each text cost about three times as much.
 
 One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
 
@@ -94,7 +94,7 @@ claude plugin eval plugins/coldread-chat --allow-tools Write
 claude plugin eval plugins/coldread --allow-tools Write Bash
 ```
 
-The chat suite has 13 cases, six of them in Polish, and the write suite has 4. Each case runs 3 times with the plugin and 3 times without it by default. Results go to `plugins/<name>/evals/results/`, which git ignores. In eval runs the skill cannot reach Vale, so the write suite measures it without its lint step.
+The chat suite has 13 cases, six of them in Polish, and the write suite has 4. Each case runs 3 times with the plugin and 3 times without it by default. Results go to `plugins/<name>/evals/results/`, which git ignores. Install Vale before you run the write suite, or the skill skips its lint step.
 
 ## Related work
 

@@ -269,3 +269,28 @@ The suite scored 83% with the rules and about 70% without, against 88% and about
 - pl-handles-verdict: at most four points in 1 of 3 runs, against 3 of 3. In both runs the answers hold a table with three rows, 2 or 3 list items and 230 to 270 words. In the arm without the rules, which did not change, the same grader went from 0 of 3 to 2 of 3.
 
 So the noise per case is larger than the 11 points measured earlier: these two cases moved by 34 and 22 points on answers of the same shape. A difference between two runs of one case says little on its own. The blind readings weigh more.
+
+## 2026-10-12: /coldread:write with the Polish lint rules
+
+Since the last run of the write suite, the skill gained Polish Vale rules, rules for repository templates, line wrapping and English software terms in Polish text, and Polish style anchors. Vale also checks drafts saved as `.txt` now. The full write suite then ran again on Claude Code 2.1.296: 4 cases, 3 runs per arm, 18.4 minutes, $4.15 at list price.
+
+The suite scored 85% with the skill and 59% without it, against 76% and about 50% in the full run of 9 October. A run with the skill still cost 2.8 times as much as one without.
+
+| Case | With skill | Without | Last run of the case, with / without |
+|---|---|---|---|
+| write-slack-pm-pl | 100% | 80% | 93% / 60% |
+| write-pr-en | 100% | 89% | 100% / 78% |
+| write-rewrite-facts | 75% | 67% | 92% / 67% |
+| write-trigger-pl | 67% | 0% | 67% / 0% |
+| All cases | 85% | 59% | 76% / 50%, full run |
+
+What changed:
+
+- Vale ran. The report of every run with the skill gives a Vale result, 0 warnings each time, including the Polish config in both Polish cases. On 9 October the skill could not run shell commands under eval and skipped Vale. This run kept no traces, so the Vale results rest on the skill's own reports.
+- Slack: the ask came first in 3 of 3 runs with the skill, against 2 of 3 last time. The labels `Phase A`, `option B` and `D3` stayed out of the message in 3 of 3 runs with the skill and 0 of 3 without it. Over the three runs of this case since the label rule, that makes 9 of 9 against 0 of 9.
+- Rewrite: the skill stated a claim the source does not make in 3 of 3 runs, against 1 of 3 last time. The run without the skill did so in 2 of 3. One text opens with "Since the migration went live on 2 June", which merges the migration with the 2 June cutover, two events the source keeps apart. The skill's own rule forbids picking one reading of an ambiguous source. The judge split its votes in 2 of the 3 failed runs, so part of this drop may be noise.
+
+What this run does not show:
+
+- Which change caused which difference. The skill, the lint step and the Claude Code version all changed since the last run.
+- Whether the Polish rules catch anything in practice. Vale reported 0 warnings in all 12 runs, and the reports do not say whether the skill fixed warnings before that.
