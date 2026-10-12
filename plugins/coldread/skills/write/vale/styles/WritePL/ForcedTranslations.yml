@@ -1,0 +1,16 @@
+extends: substitution
+message: "Forced translation of a software term. Developers say '%s'; write that instead of '%s'."
+level: warning
+ignorecase: true
+swap:
+  'punkt\p{L}* końcow\p{L}*': endpoint
+  'pamię(?:ć|ci) podręczn\p{L}*': cache
+  'oprogramowani\p{L}* pośrednicząc\p{L}*': middleware
+  'ładun\p{L}* (?:żądani|JSON|wiadomości|zdarzeni|komunikat|odpowiedzi)\p{L}*': payload
+  'flag\p{L}* (?:funkcji|funkcjonalności|funkcyjn\p{L}*)': feature flag
+  'żądani\p{L}* (?:ściągnięcia|wciągnięcia|pobrania zmian)': pull request
+  'prośb\p{L}* o (?:scalenie|połączenie|włączenie zmian)': PR
+  'magazyn\p{L}* (?:plików|obiektów)': storage
+  'magazyn\p{L}* sekretów': secrets manager
+  'przestrze(?:ń|ni|nią) nazw': namespace
+  'wywołani\p{L}* zwrotn\p{L}*': callback

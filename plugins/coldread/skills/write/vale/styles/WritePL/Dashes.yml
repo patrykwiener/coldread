@@ -1,0 +1,6 @@
+extends: occurrence
+message: "More than one dash in this paragraph. Split the sentence, or use a full stop, comma or colon."
+level: suggestion
+scope: paragraph
+max: 1
+token: ' [—–] '

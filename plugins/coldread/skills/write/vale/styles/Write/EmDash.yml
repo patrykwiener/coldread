@@ -1,0 +1,6 @@
+extends: existence
+message: "Em dash. Use a full stop, comma or colon."
+level: suggestion
+nonword: true
+tokens:
+  - '—'

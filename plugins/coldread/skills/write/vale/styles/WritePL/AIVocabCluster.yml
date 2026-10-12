@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Several AI-flavoured verbs in one paragraph (umożliwia, zapewnia, usprawnia...). Keep at most one and say what concretely happens."
+level: warning
+ignorecase: true
+scope: paragraph
+max: 1
+token: '\b(?:umożliwi\p{L}*|zapewni\p{L}*|usprawni\p{L}*|ułatwi\p{L}*|wzmacni\p{L}*|wzmocni\p{L}*|napędz\p{L}*|kształtuj\p{L}*|niuans\p{L}*|wielowymiarow\p{L}*|wieloaspektow\p{L}*|mnogoś\p{L}*|nieoceni\p{L}*|nieodzown\p{L}*|fundamentaln\p{L}*|ekosystem\p{L}*|filar\p{L}*)\b'

@@ -1,0 +1,7 @@
+extends: existence
+message: "Semicolon. Two sentences are easier to read."
+level: suggestion
+nonword: true
+scope: sentence
+tokens:
+  - ';'

@@ -1,0 +1,14 @@
+extends: existence
+message: "'%s' is filler. Cut it, or say how this sentence follows from the last."
+level: warning
+ignorecase: false
+tokens:
+  - Moreover
+  - Furthermore
+  - Additionally
+  - In conclusion
+  - It's worth noting
+  - It is worth noting
+  - It's important to note
+  - It is important to note
+  - Notably

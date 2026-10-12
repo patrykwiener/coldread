@@ -1,0 +1,21 @@
+extends: existence
+message: "'%s' is a word AI-generated Polish overuses. Use the plain word or say the concrete thing."
+level: warning
+ignorecase: true
+tokens:
+  - eleganck\p{L}*
+  - solidn\p{L}*
+  - kompleksow\p{L}*
+  - holistyczn\p{L}*
+  - zagłęb\p{L}*
+  - przełomow\p{L}*
+  - rewolucyjn\p{L}*
+  - zrewolucjonizow\p{L}*
+  - nowatorsk\p{L}*
+  - synergi\p{L}*
+  - paradygmat\p{L}*
+  - bezproblemow\p{L}*
+  - bezszwow\p{L}*
+  - krajobraz\p{L}*
+  - '(?<!(?:słow|słów)\p{L}{0,2} )kluczow(?!an)\p{L}*'
+  - 'odgryw\p{L}* \p{L}+ rolę'

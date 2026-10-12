@@ -1,0 +1,27 @@
+extends: existence
+message: "'%s' is a word AI text overuses. Use the plain word or say the concrete thing."
+level: warning
+ignorecase: true
+tokens:
+  - delve[sd]?
+  - tapestry
+  - realm
+  - paradigm
+  - embark(?:s|ed)?
+  - beacon
+  - testament to
+  - robust
+  - comprehensive
+  - cutting-edge
+  - leverag(?:e|es|ed|ing)
+  - pivotal
+  - seamless(?:ly)?
+  - game-changer
+  - utiliz(?:e|es|ed|ing)
+  - nestled
+  - showcas(?:e|es|ed|ing)
+  - deep dive
+  - holistic
+  - actionable
+  - synergy
+  - load-bearing

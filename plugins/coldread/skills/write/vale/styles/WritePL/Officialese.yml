@@ -1,0 +1,19 @@
+extends: substitution
+message: "Officialese. Prefer '%s' to '%s'."
+level: suggestion
+ignorecase: true
+swap:
+  'w chwili obecnej': teraz
+  'w obecnej chwili': teraz
+  'w dniu dzisiejszym': dziś
+  'istnieje możliwość': można
+  'nie ma możliwości': nie można
+  'jest w stanie': może
+  'są w stanie': mogą
+  'ma(?:ją)? miejsce': zdarza się|jest
+  'miał\p{L}* miejsce': zdarzył się|był
+  '(?:z uwagi|ze względu) na fakt,? że': bo
+  'w związku z faktem,? że': bo
+  'pomimo faktu,? że': mimo że
+  'w (?:przypadku|sytuacji),? gdy': gdy|jeśli
+  'w celu': żeby|aby

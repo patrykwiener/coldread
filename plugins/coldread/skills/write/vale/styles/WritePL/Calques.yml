@@ -1,0 +1,14 @@
+extends: substitution
+message: "Calque from English. Use '%s' instead of '%s'."
+level: warning
+ignorecase: true
+swap:
+  'w oparciu o': na podstawie
+  'bazuj\p{L}* na': opiera się na
+  'na ten moment': teraz|na razie
+  'na chwilę obecną': teraz|na razie
+  'robi\p{L}* sens': ma sens
+  'na koniec dnia': ostatecznie
+  finalnie: ostatecznie|w końcu
+  'adres(?:ować|uje|ują|ował\p{L}*|owan\p{L}*) (?:problem|kwesti|potrzeb|wyzwani|ryzyk|uwag)\p{L}*': rozwiązać|zająć się
+  'wspier(?:a|ają|ać|ał\p{L}*|an\p{L}*) (?:format|wersj|przeglądark|protok|standard|język)\p{L}*': obsługuje

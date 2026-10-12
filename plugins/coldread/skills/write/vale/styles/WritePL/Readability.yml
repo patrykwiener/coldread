@@ -1,0 +1,31 @@
+extends: script
+message: "Dense paragraph."
+level: suggestion
+scope: paragraph
+# FOG-PL, the Polish adaptation of the Gunning fog index: 0.4 * (words per
+# sentence + 100 * share of words with four or more syllables). Vale's built-in
+# metric counts syllables the English way and word length in bytes, so both
+# are computed here. Paragraphs under 30 words are too short to score.
+script: |
+  text := import("text")
+  matches := []
+  count := func(pat, s) {
+    m := text.re_find(pat, s, -1)
+    if m == undefined { return 0 }
+    return len(m)
+  }
+  words := text.re_find(`\p{L}+`, scope, -1)
+  if words != undefined && len(words) >= 30 {
+    body := text.re_replace(`(?i)(^|[^\p{L}])(np|tzn|tj|itd|itp|ok|por|zob|ew|godz|nr|ul|dr|prof|pkt|ust|art|tys|mln|mld|proc|m\.in)\.`, scope, "$1$2")
+    sentences := count(`[.!?…]+(?:\s|$)`, body)
+    if sentences == 0 { sentences = 1 }
+    hard := 0
+    for w in words {
+      lw := text.to_lower(w[0].text)
+      if count(`[aąeęioóuy]`, lw) - count(`i[aąeęioóuy]`, lw) >= 4 { hard += 1 }
+    }
+    fog := 0.4 * (float(len(words)) / float(sentences) + 100.0 * float(hard) / float(len(words)))
+    if fog > 15.0 {
+      matches = append(matches, {begin: 0, end: len(scope), message: "FOG-PL " + text.format_float(fog, "f", 1, 64) + " in this paragraph. Technical text for engineers should stay at or under 15: shorten sentences or swap long words for shorter ones."})
+    }
+  }

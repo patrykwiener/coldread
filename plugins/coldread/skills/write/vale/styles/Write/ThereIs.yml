@@ -1,0 +1,7 @@
+extends: existence
+message: "Sentence starts with '%s'. Name the real subject instead."
+level: suggestion
+scope: sentence
+ignorecase: false
+raw:
+  - '^There (?:is|are|was|were)\b'

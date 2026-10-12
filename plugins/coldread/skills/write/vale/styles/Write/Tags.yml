@@ -1,0 +1,6 @@
+extends: existence
+message: "'%s' looks like a tag invented to organize the text. Say in words what it means."
+level: warning
+nonword: true
+tokens:
+  - '\[\p{Lu}[\p{Lu} ]{2,}\]'

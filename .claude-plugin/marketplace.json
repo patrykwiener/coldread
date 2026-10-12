@@ -1,0 +1,19 @@
+{
+  "name": "coldread",
+  "owner": {
+    "name": "Patryk Wiener"
+  },
+  "description": "Tools that make Claude write text a reader who was not in the session understands on the first read.",
+  "plugins": [
+    {
+      "name": "coldread",
+      "source": "./plugins/coldread",
+      "description": "Make Claude write text that a reader who was not in the session understands on the first read."
+    },
+    {
+      "name": "coldread-chat",
+      "source": "./plugins/coldread-chat",
+      "description": "The coldread answering rules for every chat answer, added at session start. Use it instead of the CLAUDE.md import line, not with it."
+    }
+  ]
+}

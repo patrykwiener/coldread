@@ -1,0 +1,17 @@
+extends: existence
+message: "'%s' is filler. Cut it, or say how this sentence follows from the last."
+level: warning
+ignorecase: false
+tokens:
+  - Ponadto
+  - Co więcej
+  - Dodatkowo
+  - 'Warto (?:zauważyć|podkreślić|wspomnieć|dodać|nadmienić|zaznaczyć|pamiętać)'
+  - '[Nn]ależy (?:zauważyć|podkreślić|nadmienić|zaznaczyć)'
+  - 'Co (?:istotne|ważne|ciekawe)'
+  - Podsumowując
+  - Reasumując
+  - Na zakończenie
+  - Niewątpliwie
+  - Bez wątpienia
+  - Nie da się ukryć

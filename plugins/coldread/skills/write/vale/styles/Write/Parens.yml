@@ -1,0 +1,10 @@
+extends: existence
+message: "Parenthesis. If the aside matters, give it its own sentence; if not, cut it."
+level: suggestion
+nonword: true
+# Two parentheses are not flagged, because SKILL.md asks for them: a bare
+# acronym after its spelled-out term, as in 'Model Context Protocol (MCP)',
+# and a bare ticket or issue number after its plain name, as in
+# 'the duplicate-invoice bug (#412)'.
+tokens:
+  - '\((?!(?:[A-Z]{3,5}|#\d{1,6}|[A-Z]{2,5}-\d{1,6})\))[^)]+\)'

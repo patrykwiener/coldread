@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Several AI-flavoured verbs in one paragraph. Keep at most one."
+level: warning
+ignorecase: true
+scope: paragraph
+max: 1
+token: '\b(?:harness|navigat(?:e|es|ing)|foster|elevat(?:e|es|ing)|unleash|streamlin(?:e|es|ed|ing)|empower|bolster|spearhead|resonat(?:e|es)|revolutioniz(?:e|es)|facilitat(?:e|es|ing)|nuanced|crucial|multifaceted|ecosystem|myriad|cornerstone|paramount|transformative)\b'

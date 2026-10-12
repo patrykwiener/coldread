@@ -1,0 +1,9 @@
+extends: existence
+message: "'%s' hides the verb in a noun. Use the verb itself: 'dokonać zmiany' → 'zmienić', 'nastąpił wzrost' → 'wzrosło'."
+level: suggestion
+ignorecase: true
+tokens:
+  - 'dokon(?:ać|ał\p{L}*|ano|an\p{L}*|uj\p{L}*|ywa\p{L}*|a|ają) \p{L}+'
+  - 'przeprowadz\p{L}* (?:analiz|weryfikacj|walidacj|kontrol|modyfikacj)\p{L}*'
+  - 'nastąpi\p{L}* (?:zmian|wzrost|spad|zwiększeni|zmniejszeni|popraw|pogorszeni)\p{L}*'
+  - 'poddan\p{L}* (?:analizie|weryfikacji|modyfikacji|walidacji)'

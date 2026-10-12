@@ -1,0 +1,30 @@
+extends: existence
+message: "'%s' is an ID. Say in plain words what it is, next to it."
+level: suggestion
+ignorecase: false
+tokens:
+  - '\b[A-Z]{2,5}-?\d{2,4}\b'
+# Algorithm and encoding names that have the same shape as a ticket ID.
+exceptions:
+  - SHA224
+  - SHA256
+  - SHA384
+  - SHA512
+  - RS256
+  - RS384
+  - RS512
+  - HS256
+  - HS384
+  - HS512
+  - ES256
+  - ES384
+  - ES512
+  - PS256
+  - AES128
+  - AES192
+  - AES256
+  - BASE32
+  - BASE64
+  - UTF16
+  - UTF32
+  - ISO8601

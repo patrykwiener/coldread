@@ -1,0 +1,28 @@
+{
+  "name": "coldread",
+  "description": "Make Claude write text that a reader who was not in the session understands on the first read: /coldread:write, /coldread:plain and a context-free cold reader.",
+  "author": {
+    "name": "Patryk Wiener"
+  },
+  "repository": "https://github.com/patrykwiener/coldread",
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "documentation",
+    "plain-language",
+    "readability"
+  ],
+  "userConfig": {
+    "doc_language": {
+      "type": "string",
+      "title": "Document language",
+      "description": "Language of texts that /coldread:write produces. auto follows the language of the request. A project's CLAUDE.md can name a different one.",
+      "options": [
+        "auto",
+        "en",
+        "pl"
+      ],
+      "default": "auto"
+    }
+  }
+}

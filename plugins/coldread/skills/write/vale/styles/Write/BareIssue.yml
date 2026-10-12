@@ -1,0 +1,6 @@
+extends: existence
+message: "'%s' is an issue number. Say in plain words what it is, next to it."
+level: suggestion
+nonword: true
+tokens:
+  - '#\d{2,6}\b'

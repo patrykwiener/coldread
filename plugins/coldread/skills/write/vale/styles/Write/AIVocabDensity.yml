@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Many vague intensifiers in this text (significant, effective, dynamic...). Replace some with numbers or specifics."
+level: suggestion
+ignorecase: true
+scope: text
+max: 4
+token: '\b(?:significant(?:ly)?|innovative|effective(?:ly)?|dynamic|scalable|compelling|unprecedented|exceptional|remarkabl[ey]|sophisticated|instrumental|world-class)\b'

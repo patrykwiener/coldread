@@ -1,0 +1,14 @@
+{
+  "name": "coldread-chat",
+  "description": "Adds the coldread answering rules to every session, so chat answers are easy to follow on the first read. Use it instead of the CLAUDE.md import line, not with it.",
+  "author": {
+    "name": "Patryk Wiener"
+  },
+  "repository": "https://github.com/patrykwiener/coldread",
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "plain-language",
+    "chat"
+  ]
+}

@@ -1,0 +1,35 @@
+extends: existence
+message: "'%s' looks like a label invented during the work. Replace it with what it is."
+level: warning
+ignorecase: false
+tokens:
+  - '\b[A-Z]{1,2}\d{1,2}[a-z]?\b'
+  - '\b[A-Z]-[A-Z]{1,2}\d{1,2}[a-z]?\b'
+  - '\bPhase [A-Z0-9]\b'
+  - '\b[Oo]ption [A-Z]\b'
+  - '\b[Ff]az(?:a|y|ie|ę|ą) [A-Z0-9]\b'
+  - '\b[Ee]tap(?:u|em|ie)? [A-Z0-9]\b'
+  - '\b[Oo]pcj(?:a|i|ę|ą) [A-Z]\b'
+  - '\b[Ww]ariant(?:u|em|ie)? [A-Z]\b'
+# Common technical names that have the same shape as a session label.
+exceptions:
+  - S3
+  - EC2
+  - K8s
+  - P50
+  - P90
+  - P95
+  - P99
+  - H1
+  - H2
+  - H3
+  - L1
+  - L2
+  - L3
+  - I18n
+  - L10n
+  - A11y
+  - M1
+  - M2
+  - M3
+  - M4

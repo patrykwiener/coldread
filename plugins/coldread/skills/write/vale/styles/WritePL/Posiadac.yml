@@ -1,0 +1,6 @@
+extends: existence
+message: "'%s': if this means plain 'have', use a form of 'mieć'. Keep 'posiadać' only where ownership is the point."
+level: suggestion
+ignorecase: true
+tokens:
+  - 'posiad(?:a|ają|ać|ał\p{L}*|ali|ając\p{L}*)'

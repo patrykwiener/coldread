@@ -1,0 +1,13 @@
+# Vale packages downloaded by `vale sync`; only our own Write and WritePL styles are tracked
+plugins/coldread/skills/write/vale/styles/*
+!plugins/coldread/skills/write/vale/styles/Write/
+!plugins/coldread/skills/write/vale/styles/WritePL/
+
+.DS_Store
+
+# Editor and IDE settings stay on each computer
+.idea/
+.vscode/
+
+# Eval results written by `claude plugin eval`
+plugins/*/evals/results/

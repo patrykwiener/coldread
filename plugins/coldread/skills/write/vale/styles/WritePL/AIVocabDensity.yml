@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Many vague intensifiers in this text (istotny, znaczący, efektywny...). Replace some with numbers or specifics."
+level: suggestion
+ignorecase: true
+scope: text
+max: 4
+token: '\b(?:istotn\p{L}*|znacząc\p{L}*|znaczn\p{L}*|efektywn\p{L}*|skuteczn\p{L}*|innowacyjn\p{L}*|zaawansowan\p{L}*|optymaln\p{L}*|wyjątkow\p{L}*|niezwykl\p{L}*|niezmiern\p{L}*|ogromn\p{L}*|imponując\p{L}*)\b'
