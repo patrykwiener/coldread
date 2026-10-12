@@ -294,3 +294,14 @@ What this run does not show:
 
 - Which change caused which difference. The skill, the lint step and the Claude Code version all changed since the last run.
 - Whether the Polish rules catch anything in practice. Vale reported 0 warnings in all 12 runs, and the reports do not say whether the skill fixed warnings before that.
+
+## 2026-10-12: two names stay two things
+
+After the run above, the rewrite rule in /coldread:write gained two sentences: treat two names in the source as two things unless you checked that they are one, because writing them as one event adds a fact. The example in the skill uses other names than the test case. The rewrite case then ran again: 3 runs per arm, 4.6 minutes, $0.95 at list price.
+
+The skill kept the migration and the 2 June cutover apart in 3 of 3 runs, against merging them in the run above. The case still scored 83% in both arms, because the invented-claims grader does not test what the case was built for:
+
+- It failed 2 of the 3 texts with the skill, unanimously. Both say that using the idempotency layer also cut the latency. The source supports that reading: the deduplication runs "yielding a 37% reduction in p95 latency".
+- It passed 2 of the 3 texts without the skill, although both open with a claim the source does not make: that the 2 June cutover was the switch to a new system and the migration itself.
+
+The grader needs to say both things before this case can measure the rule.
