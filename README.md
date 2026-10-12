@@ -1,6 +1,6 @@
 # coldread
 
-coldread makes Claude Code write for a reader who was not in the session. Its writing skill drafts PR descriptions, design docs, handoff notes and Slack messages. Then a subagent that has seen neither the session nor your CLAUDE.md reads each draft and reports what it could not follow. Optional chat rules make everyday answers easier to follow.
+coldread makes Claude Code write for a reader who was not in the session. Its writing skill drafts PR descriptions, review comments, design docs, explainers, handoff notes and Slack messages. Then a subagent that has seen neither the session nor your CLAUDE.md reads each draft and reports what it could not follow. Optional chat rules make everyday answers easier to follow.
 
 ## Claude writes from inside the session
 
@@ -10,7 +10,7 @@ Claude knows what its own working labels mean, and the reader does not. In the e
 
 | Part | When it works | What it does |
 |---|---|---|
-| `/coldread:write` | starts on its own when you ask for a PR description, a doc or a message | Sets a brief, drafts, checks the text with Vale, a linter for prose, then hands it to the cold reader. |
+| `/coldread:write` | starts on its own when you ask for a PR description, a review, a doc or a message | Sets a brief, drafts, checks that every claim has a source, lints the text with Vale, a linter for prose, then hands it to the cold reader. |
 | `coldread:cold-reader` | inside `/coldread:write` | A subagent with no session and no CLAUDE.md that reads the text once and reports what it could not follow. |
 | `/coldread:plain` | when an answer did not land | Names what failed, such as an unknown term, then explains again in new words. |
 | Chat rules, in the optional `coldread-chat` plugin | every chat answer | Nine rules, such as: answer first, at most four points, explain every new term. |
@@ -29,7 +29,7 @@ With the chat rules, also add a `## About me` section to `~/.claude/CLAUDE.md` t
 
 ## What the evals show
 
-Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 4 writing cases, `/coldread:write` passed 85% against 59% without it. Each text cost about three times as much.
+Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 4 writing cases, `/coldread:write` passed 85% against 59% without it. Each text cost about three times as much. After the skill gained rules for reviews, explainers and claims, it passed 86% of 8 writing cases on a second computer, against 70% before those rules and 53% without the skill. The gain comes from the four new cases, which test those rules: on the four older ones both versions scored 78%. That run used another judge and no Vale, so its numbers do not compare with the others.
 
 One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
 
@@ -42,7 +42,9 @@ One person wrote the rules, the cases and the checks, and a model does the gradi
 /coldread:write rewrite docs/design.md for a backend developer who did not work on this
 ```
 
-It first shows a brief: the reader, the one thing they must do, the points and a word budget. The points set the length, about 80 words each, so correct a wrong or extra point when you see it. The skill then drafts, fixes what the cold reader could not follow, and reports the cold reader's findings, the Vale warnings and the word count. It also quotes, side by side, what the brief says the reader must do and what the cold reader understood. When it rewrites or shortens a text, it lists every fact it removed, corrected or added.
+It first shows a brief: the reader, the one thing they must do, the points, where the text will be read and a word budget. The points set the length, about 80 words each, so correct a wrong or extra point when you see it. Where the text will be read sets the room: a review comment gets at most three sentences, and a Slack message or a commit body gets no Details section. When the reader must understand how something works, the skill defines each term with an example and walks one case from start to end.
+
+The skill then drafts, fixes what the cold reader could not follow, and reports the cold reader's findings, the Vale warnings and the word count. It also quotes, side by side, what the brief says the reader must do and what the cold reader understood. When it rewrites or shortens a text, it lists every fact it removed, corrected or added, and every claim it could not trace to your notes, a check or the code.
 
 When an answer did not land, type `/coldread:plain`, or say what you missed: `/coldread:plain what is a lease?`
 
@@ -53,6 +55,7 @@ When an answer did not land, type `/coldread:plain`, or say what you missed: `/c
 | Document language: `auto`, `en` or `pl` | `/plugin configure coldread@coldread` | `auto` writes in the language of your request |
 | A project's document language and readers | two or three lines in that project's `CLAUDE.md` | none |
 | What you know well | the About me section in `~/.claude/CLAUDE.md` | none, so Claude guesses |
+| A project's own lint rules, the terms its readers know and its own style anchors | a `.coldread/` folder in that repository, see [Tune the Vale checks](#tune-the-vale-checks) | none |
 
 A project's lines can read: "Documents in English. Reader: a backend developer on the team who knows the codebase and Jira." Claude Code keeps plugin options in user settings only, so a project's exceptions go into its `CLAUDE.md`. Chat needs no language setting, because the rules tell Claude to reply in your language.
 
@@ -72,12 +75,24 @@ Claude Code loads a plugin from a local marketplace straight from the clone at e
 
 ## Tune the Vale checks
 
-The rules live in `plugins/coldread/skills/write/vale/`. The `.vale.ini` config lints English with the rules in `styles/Write/`. The `pl.ini` config lints Polish with the rules in `styles/WritePL/` and six of the English ones, such as `SessionLabels`, which flags labels like `Phase A`. For text in another language, `/coldread:write` skips linting and says so.
+The rules live in `plugins/coldread/skills/write/vale/`. The `.vale.ini` config lints English with the rules in `styles/Write/`. The `pl.ini` config lints Polish with the rules in `styles/WritePL/` and seven of the English ones, such as `SessionLabels`, which flags labels like `Phase A`. The skill runs both through `lint.sh`. For text in another language, `/coldread:write` skips linting and says so.
 
-- **Acronyms**: add the ones your team uses daily to `exceptions` in `styles/Write/Acronyms.yml` or `styles/WritePL/Acronyms.yml`, in quotes. YAML reads an unquoted `NULL` or `YES` as a value, which silently disables the rule.
+- **Acronyms**: add the ones every reader of yours knows to `exceptions` in `styles/Write/Acronyms.yml` or `styles/WritePL/Acronyms.yml`, in quotes. YAML reads an unquoted `NULL` or `YES` as a value, which silently disables the rule. Terms that only one project's readers know belong in that project's own layer, described below.
 - **A noisy rule**: change its `level:` to `suggestion`, which the skill treats as a hint rather than something to fix, or delete its file.
 
 Your edits apply only when the plugin runs from your clone, as set up in the section above.
+
+### A project's own rules and examples
+
+A repository can add its own layer without changing the plugin. `/coldread:write` uses these files when they exist, and each one is optional:
+
+| File in the repository | What it does |
+|---|---|
+| `.coldread/vale/styles/config/vocabularies/Project/accept.txt` | Lists terms the project's readers use daily, one per line, so Vale stops flagging them, for example as acronyms to spell out. |
+| `.coldread/vale/styles/Project/*.yml` | Adds the project's own Vale rules, such as product names it must spell one way. |
+| `.coldread/examples-en.md` and `.coldread/examples-pl.md` | Holds style anchors from the project's own texts, which the skill reads instead of the invented ones. |
+
+Commit the folder to share it with the team, or keep it out of git for yourself.
 
 ## Claude.ai and ChatGPT
 
@@ -94,7 +109,9 @@ claude plugin eval plugins/coldread-chat --allow-tools Write
 claude plugin eval plugins/coldread --allow-tools Write Bash
 ```
 
-The chat suite has 13 cases, six of them in Polish, and the write suite has 4. Each case runs 3 times with the plugin and 3 times without it by default. Results go to `plugins/<name>/evals/results/`, which git ignores. Install Vale before you run the write suite, or the skill skips its lint step.
+The chat suite has 13 cases, six of them in Polish, and the write suite has 8. Each case runs 3 times with the plugin and 3 times without it by default. Results go to `plugins/<name>/evals/results/`, which git ignores. Install Vale before you run the write suite, or the skill skips its lint step.
+
+If every run stops at once with an error about the Docker credential store, the Bash sandbox refused to start because `~/.docker` holds a symbolic link. Run the write suite with `--allow-tools Write` only. It then measures the skill without its shell steps: the word count and the lint.
 
 ## Related work
 

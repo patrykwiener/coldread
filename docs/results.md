@@ -320,3 +320,60 @@ The invented-claims grader of the rewrite case now says what the source supports
 
 - All 3 texts without the skill open with a sentence such as "Since we switched over to the new system on 2 June", which merges the migration with the cutover. The grader now fails them. None of the 3 texts with the skill merges the two events. The third text with the skill failed the grader unanimously, and the votes do not say which claim the judge objected to.
 - Plain words fell from 3 of 3 to 1 of 3 with the skill. The two failed texts drop `leverages` and `robust` and explain idempotency, which is all the grader asks. The judge split its votes 1 to 2 in both, so this looks like judge noise.
+
+## 2026-10-12: review comments, explainers and a claim check
+
+The changed skill scored 86% on 8 cases, against 70% for the skill before the changes and 53% without it. The gains come from the four new cases, which test the new rules, so they favour the changed skill by design. /coldread:write gained these rules:
+
+- The brief says where the text will be read. A review comment holds one problem in at most three sentences, with the fix as a suggestion block, and a nice-to-have stays in the report for the user. A chat message, an issue comment or a commit body gets no Details.
+- When the reader must understand how something works, the skill defines each term with an example and follows one case from start to end.
+- A new step checks that each claim in the main part has a source: the user's notes, a check that ran, or code that was read.
+- A verified fact is tied to a commit, not to the day of the check. The text never points to a file on the writer's machine. Tests are split into what ran, what was only read and what is planned. An open question names nobody as its owner unless they agreed.
+- A PR description, a review or a message gets no title heading. Details go before a section that a template keeps last, and a section for a second reader gets its own reader line.
+- Vale flags paths on the writer's machine and the dates of checks. `lint.sh` also runs a repository's own rules from `.coldread/vale/styles`.
+
+Setup: Claude Code 2.1.287 on a second computer, the default agent model, Sonnet as judge, 3 runs per arm. Bash was blocked there and files could not be written outside the case, so Vale, the word count and most cold reads did not run in either arm. The skill before the changes ran the same way. For six cases it was the version from before the five commits of the runs above. For the review and rewrite cases it was the version after them.
+
+| Case | Skill before | Skill after | Without |
+|---|---|---|---|
+| write-review-comments-en | 58% | 100% | 50% |
+| write-explain-en | 33% | 100% | 33% |
+| write-design-notes-en | 53% | 100% | 40% |
+| write-pr-en | 44% | 78% | 100% |
+| write-pr-template-en | 100% | 78% | 67% |
+| write-rewrite-facts | 75% | 75% | 75% |
+| write-slack-pm-pl | 93% | 93% | 60% |
+| write-trigger-pl | 100% | 67% | 0% |
+| All cases | 70% | 86% | 53% |
+
+What improved, as runs passed out of 3 with the changed skill against the skill before:
+
+- Review: comments of at most three sentences 3 against 1, and the nice-to-have kept out of GitHub 3 against 0.
+- Explainer: every term explained, most with an example, 3 against 0. One case followed from start to end 3 against 0. The quiz passed 3 of 3 in every arm, so it does not separate them.
+- Design doc: no date of the re-check 3 against 0, nobody named as the one to decide 3 against 0, and no path to the author's file 3 against 2.
+
+Where the changed skill did worse or did not move:
+
+- Template: the product section passed 1 of 3 against 3 of 3. One text says users without a timezone get the email "at the same time as today" instead of at 09:00 UTC. Another keeps 09:00 UTC and still failed, and the votes do not say why.
+- Trigger: the ask came first in 2 of 3 runs, in both runs of the changed skill, against 3 of 3. The failed text asks in its second sentence, after a long note about checks that could not run.
+- Rewrite: no arm passed the invented-claims grader. On the first computer the skill passed 2 of 3 with the same grader, so the claim check made no difference here.
+- PR: facts kept rose to 2 of 3 from 0 of 3. A word search finds all four facts in each of the three earlier texts, so those earlier failures are probably the judge's.
+
+Reading every failed text changes the picture for the four cases that existed before. Both versions scored 78% on them, and the failures differ in kind:
+
+- The skill before failed "the ask comes first" in two PR texts that open with a title heading. The judge counts the title as a sentence, so the ask lands third. The changed skill writes no title.
+- The changed skill failed the same grader three times, and all three are judge errors. Two texts ask in their first sentence, as in "One trade-off needs your approval before merge: invoice download links become presigned S3 URLs…". The third, in Polish, asks for the review in its second sentence. The judge failed each by 3 votes to 0, so the three votes on one text are not independent checks.
+- Its one failure of facts kept had split votes, and all four facts are in the text. Only the table size sits under "On staging", and the backup time follows in the next sentence.
+- The template regression is real: one product section dropped the exact time. After this run, the rule for a second reader gained one sentence: simplify the words, not the facts. That sentence has not been measured yet.
+
+Three things changed during this work, each before the run in the table. A first run of the changed skill scored 79% and showed three problems. A title above a PR description pushed the ask to its third sentence. The review summary used its follow-up for the nice-to-have. An open question still named who could decide. The skill now covers all three. The review case now gives the replacement line, because the skill rightly refused to guess code it could not see. The open-questions grader of the design doc case failed a text that met all its conditions, so it is now two graders.
+
+Why Sonnet judges this run: with Haiku, a PR text that asks for the approval in its second sentence failed "the ask comes first" by 3 votes to 0. The same text failed "facts kept" with all four facts in it. Sonnet passed a Slack text of the same shape on every grader, for about $0.04 per run.
+
+What this run does not show:
+
+- Whether the changes help when Vale and the cold reader run, because neither ran here.
+- How these scores compare with the runs above, because the judge, the computer and the Claude Code version all differ.
+- How the rules hold up on cases from another author. One more caveat comes from this computer: its organisation-level instructions load into eval runs, and in one run they supplied surnames for two people the notes named by first name only.
+
+All runs in this section cost $32.53 at list price. That includes the first run of the changed skill and a baseline judged by Haiku.
