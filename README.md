@@ -50,7 +50,7 @@ When an answer did not land, type `/coldread:plain`, or say what you missed: `/c
 
 | Setting | Where | Default |
 |---|---|---|
-| Document language: `auto`, `en` or `pl` | `/plugin configure coldread` | `auto` writes in the language of your request |
+| Document language: `auto`, `en` or `pl` | `/plugin configure coldread@coldread` | `auto` writes in the language of your request |
 | A project's document language and readers | two or three lines in that project's `CLAUDE.md` | none |
 | What you know well | the About me section in `~/.claude/CLAUDE.md` | none, so Claude guesses |
 
