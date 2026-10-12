@@ -319,4 +319,4 @@ The invented-claims grader of the rewrite case now says what the source supports
 | Case score | 75% | 50% |
 
 - All 3 texts without the skill open with a sentence such as "Since we switched over to the new system on 2 June", which merges the migration with the cutover. The grader now fails them. None of the 3 texts with the skill merges the two events. The third text with the skill failed the grader unanimously, and the votes do not say which claim the judge objected to.
-- Plain words fell from 3 of 3 to 1 of 3 with the skill. The two failed texts drop "leverages" and "robust" and explain idempotency, which is all the grader asks. The judge split its votes 1 to 2 in both, so this looks like judge noise.
+- Plain words fell from 3 of 3 to 1 of 3 with the skill. The two failed texts drop `leverages` and `robust` and explain idempotency, which is all the grader asks. The judge split its votes 1 to 2 in both, so this looks like judge noise.
