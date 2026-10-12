@@ -1,6 +1,6 @@
 <!-- These anchors are invented examples. They show the register and opening to aim
-for in Polish. Replace them with 2-3 texts from your own project once you have
-rewritten them with /write and they passed the cold read. -->
+for in Polish. To use texts from your own project instead, put 2-3 of them in
+.coldread/examples-pl.md in that repository once they passed the cold read. -->
 
 # Style anchors (Polish)
 
@@ -8,7 +8,7 @@ Match the register, density and opening of these examples, not their topics.
 
 ## Handoff note
 
-> Poprawka błędu z podwójnymi fakturami (#412) weszła do `main` 3 marca w PR #88 i od wydania 2.4.0 działa na produkcji. Zostało sprzątanie duplikatów, które już poszły do klientów, i jedno pytanie do działu finansów. Nie znalazłem śladu, że ktoś to sprzątanie uruchomił, więc traktuj je jako niezrobione.
+> Poprawka błędu z podwójnymi fakturami (#412) weszła do `main` w PR #88 i od wydania 2.4.0 działa na produkcji. Zostało sprzątanie duplikatów, które już poszły do klientów, i jedno pytanie do działu finansów. Nie znalazłem śladu, że ktoś to sprzątanie uruchomił, więc traktuj je jako niezrobione.
 >
 > **Błąd.** `POST /api/invoices/send` po przekroczeniu czasu ponawiał wysyłkę i nie sprawdzał, czy pierwsza próba dotarła do operatora płatności. Gdy operator odpowiadał wolno, klient dostawał dwie identyczne faktury.
 >
@@ -35,3 +35,28 @@ Why it works: the reader's decision comes first, with its cost. What changed fol
 > Tabela faktur zajmuje 180 GB, z czego 170 GB to pliki PDF, a nocny backup trwa przez to cztery godziny. Po przeniesieniu plików tabela zmieści się w 10 GB.
 
 Why it works: the goal and the one decision the approver must make are in the first sentence. The problem is then stated with numbers, and nothing in it depends on a document the reader does not have.
+
+## Review comments
+
+> **Do poprawy:** Strony numerujemy od 1, więc `offset = page * page_size` na pierwszej stronie pomija pierwsze 20 wyników. Użytkownik nigdy nie widzi najnowszych zamówień.
+> ```suggestion
+>     offset = (page - 1) * page_size
+> ```
+
+> **Pytanie:** Po tej poprawce `?page=0` daje ujemny offset. Ma zwracać pierwszą stronę, jak dziś, czy błąd 400?
+
+> Nowe parametry filtrów czyta się dobrze. Przed merge'em popraw offset i zdecyduj, co zwraca strona 0. Na później jeden test: prośba o stronę 1 i sprawdzenie, że jest na niej najnowsze zamówienie.
+
+Why it works: each comment holds one problem, why it matters and the fix, in at most three sentences, and the code change is a suggestion the author can apply. The summary says what is good, what blocks the merge and the one follow-up. Style preferences and the reviewer's evidence stay out.
+
+## Explainer opening
+
+> Link do resetu hasła pozwala użytkownikowi, który zapomniał hasła, ustawić nowe bez pisania do supportu. Ta notatka pokazuje, co się dzieje od kliknięcia „Nie pamiętam hasła" do chwili, gdy nowe hasło działa. Jest dla osób, które odpowiadają na zgłoszenia w tej sprawie.
+>
+> **Token resetu.** Losowy ciąg znaków, który potwierdza, że link wysłaliśmy my. Przykład: `k3J9…` w `https://app.example.com/reset?token=k3J9…`. Leży w tabeli `password_resets`, jeden wiersz na prośbę.
+>
+> **Ważność.** Jak długo token działa: 30 minut. Link z prośby z 10:00 otwarty o 10:31 pokazuje „Link wygasł".
+>
+> **Jeden reset krok po kroku.** O 10:00 Ana prosi o reset. Zapisujemy token dla jej konta i wysyłamy jej link mailem. O 10:12 Ana otwiera link i ustawia nowe hasło, a my oznaczamy token jako zużyty, więc ten sam link przy drugim kliknięciu już nie działa.
+
+Why it works: two sentences say what the thing does and who the note is for. Each term gets one sentence, one example with values, and where it lives. Then one invented case runs from start to end, so the reader sees how the terms fit together.
