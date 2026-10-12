@@ -426,3 +426,13 @@ What this run does not show:
 - How the rules hold up on cases from another author.
 
 All runs in this section cost $19.88 at list price.
+
+## 2026-10-12: nothing after the last section
+
+The run above showed that the sentence on trailers did not work. In 3 of 6 template texts from each version, the attribution line "Generated with Claude Code" followed the section that the template keeps last. The rule now says that nothing may follow such a section, not even a trailer, and that the skill leaves the trailer out and says so in its report. The template case then ran 6 times with the changed skill and Haiku as judge, in 2.9 minutes, for $2.18.
+
+No text put the attribution line after the last section, and all 6 reports say that the skill left it out. The case scored 88%. Every failed text was read:
+
+- One text opens with a paragraph above Summary, which the template does not have. The judge failed its section order by 4 votes to 0.
+- One text has nothing outside the template's sections, and the judge failed its section order by 2 votes to 1.
+- One product section says that users without a timezone get reminders at "9 in the morning UK winter time" instead of at 09:00 UTC. A text from the skill on main did the same in the run above.
