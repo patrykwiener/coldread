@@ -29,7 +29,7 @@ With the chat rules, also add a `## About me` section to `~/.claude/CLAUDE.md` t
 
 ## What the evals show
 
-Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 4 writing cases, `/coldread:write` passed 85% against 59% without it. Each text cost about three times as much. After the skill gained rules for reviews, explainers and claims, it passed 86% of 8 writing cases on a second computer, against 70% before those rules and 53% without the skill. The gain comes from the four new cases, which test those rules: on the four older ones both versions scored 78%. That run used another judge and no Vale, so its numbers do not compare with the others.
+Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 8 writing cases, `/coldread:write` passed 90% against 53% without it, and against 77% for the skill before its rules for reviews, explainers and claims. The gain comes from the four new cases, which test those rules. On the four older ones, both versions passed 96% to 98%. Each text cost about three times as much as without the skill.
 
 One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
 
