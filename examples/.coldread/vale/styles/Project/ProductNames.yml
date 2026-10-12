@@ -1,0 +1,7 @@
+# An example rule: replace the names with your own products.
+extends: substitution
+message: "Write the product name as '%s', not '%s'."
+level: warning
+ignorecase: false
+swap:
+  'Payout Api|payout API|Payout-API': Payout API

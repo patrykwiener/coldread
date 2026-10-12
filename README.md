@@ -15,6 +15,12 @@ Claude knows what its own working labels mean, and the reader does not. In the e
 | `/coldread:plain` | when an answer did not land | Names what failed, such as an unknown term, then explains again in new words. |
 | Chat rules, in the optional `coldread-chat` plugin | every chat answer | Nine rules, such as: answer first, at most four points, explain every new term. |
 
+## What the evals show
+
+Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 8 writing cases, `/coldread:write` passed 90% against 53% without it, and against 77% for the skill before its rules for reviews, explainers and claims. The gain comes from the four new cases, which test those rules. On the four older ones, both versions passed 96% to 98%. Each text cost about three times as much as without the skill.
+
+One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
+
 ## Install
 
 ```bash
@@ -25,13 +31,53 @@ brew install vale                              # optional: the lint step; other 
 # later, to update: claude plugin update coldread@coldread
 ```
 
-With the chat rules, also add a `## About me` section to `~/.claude/CLAUDE.md` that says what you know well and where you are a layman. The rules use it to decide which terms to explain, and without it Claude guesses. [`rules/CLAUDE.example.md`](rules/CLAUDE.example.md) shows one.
+Without Vale, `/coldread:write` skips its lint step and says so. Then set coldread up for yourself and your projects in the three steps below.
 
-## What the evals show
+## Set it up in three steps
 
-Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 8 writing cases, `/coldread:write` passed 90% against 53% without it, and against 77% for the skill before its rules for reviews, explainers and claims. The gain comes from the four new cases, which test those rules. On the four older ones, both versions passed 96% to 98%. Each text cost about three times as much as without the skill.
+The first two steps take a few minutes each. The third is for teams that want the lint step to know their project.
 
-One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
+### 1. Tell Claude what you know
+
+This step is for the chat rules from `coldread-chat`, which shape every answer: answer first, at most four points, every new term explained. They use an About me note to decide which terms are new to you, and without it Claude guesses. Add the note to `~/.claude/CLAUDE.md`, the file Claude Code loads in every session. In two to four sentences, say what Claude can leave unexplained, where you are a layman, and how you read most easily.
+
+```markdown
+## About me
+
+Backend engineer: Python, PostgreSQL and AWS need no explanation. A layman in frontend work, construction and electrical installations. I read symbols such as ≤ and × faster than the words for them.
+```
+
+[`rules/CLAUDE.example.md`](rules/CLAUDE.example.md) has two more notes, for a product manager and for a data scientist. To check yours, ask Claude about a topic from your layman list and see whether the answer explains its trade terms.
+
+### 2. Tell `/coldread:write` who reads your project's texts
+
+In each project where you write for other people, add a Writing section to the `CLAUDE.md` in the project's root. Say which language documents use, who reads each kind of text, and which names those readers already know. The skill takes the reader for the brief it shows before drafting from this section, so the cold reader does not ask about names your team uses daily.
+
+```markdown
+## Writing
+
+Documents in English. PR descriptions: a backend developer on the team who knows the codebase, Jira and our deploy pipeline. Slack messages and release notes: the product manager, who knows the product but not the code. Readers know these names: Ledger, Payout API, the nightly sync.
+```
+
+[`rules/CLAUDE.project.example.md`](rules/CLAUDE.project.example.md) has versions for a Polish team and for an open-source library. To check the section, ask for a PR description: the brief that `/coldread:write` shows first should describe your reviewer.
+
+### 3. Optional: share your project's terms and texts
+
+A `.coldread/` folder in your project's repository tells `/coldread:write` what your readers know. Vale uses the first two files, and the skill reads the third. Each file is optional:
+
+| File in `.coldread/` | What it does |
+|---|---|
+| `vale/styles/config/vocabularies/Project/accept.txt` | Lists terms your readers use daily, one per line, so Vale stops asking you to spell them out. |
+| `vale/styles/Project/*.yml` | Adds your own Vale rules, such as the one way to spell a product name. |
+| `examples-en.md` or `examples-pl.md` | Holds two or three of your team's English or Polish texts as style anchors, which the skill reads instead of its invented ones. |
+
+This repository has an example folder with five sample terms, one rule for a product name and one invented English text. To copy it, run this in your project's root:
+
+```bash
+curl -fsSL https://github.com/patrykwiener/coldread/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 coldread-main/examples/.coldread
+```
+
+Then replace the samples with your own: your terms in `accept.txt`, your product names in `vale/styles/Project/ProductNames.yml`, and your team's texts in `examples-en.md`. Commit the folder to share it with the team. To check it, ask for a text that uses one of your terms: the Vale warnings that `/coldread:write` lists at the end should not name it.
 
 ## Use
 
@@ -53,13 +99,11 @@ When an answer did not land, type `/coldread:plain`, or say what you missed: `/c
 | Setting | Where | Default |
 |---|---|---|
 | Document language: `auto`, `en` or `pl` | `/plugin configure coldread@coldread` | `auto` writes in the language of your request |
-| A project's document language and readers | two or three lines in that project's `CLAUDE.md` | none |
-| What you know well | the About me section in `~/.claude/CLAUDE.md` | none, so Claude guesses |
-| A project's own lint rules, the terms its readers know and its own style anchors | a `.coldread/` folder in that repository, see [Tune the Vale checks](#tune-the-vale-checks) | none |
+| What you know well | the About me section in `~/.claude/CLAUDE.md`, step 1 of the setup | none, so Claude guesses |
+| A project's document language and readers | a Writing section in that project's `CLAUDE.md`, step 2 of the setup | none |
+| A project's own lint rules, the terms its readers know and its own style anchors | a `.coldread/` folder in that repository, step 3 of the setup | none |
 
-A project's lines can read: "Documents in English. Reader: a backend developer on the team who knows the codebase and Jira." Claude Code keeps plugin options in user settings only, so a project's exceptions go into its `CLAUDE.md`. Chat needs no language setting, because the rules tell Claude to reply in your language.
-
-Tell the skill what your readers already know, such as the codebase, tools and product names, in the request or in the project's `CLAUDE.md`. The skill passes this on in its description of the reader, so the cold reader does not ask for explanations of them.
+Claude Code keeps plugin options in user settings only, so a project's exceptions go into its `CLAUDE.md`. Chat needs no language setting, because the rules tell Claude to reply in your language. A request can also name its own reader, as in the examples under Use.
 
 ## Run coldread from a clone, on one computer or several
 
@@ -77,22 +121,10 @@ Claude Code loads a plugin from a local marketplace straight from the clone at e
 
 The rules live in `plugins/coldread/skills/write/vale/`. The `.vale.ini` config lints English with the rules in `styles/Write/`. The `pl.ini` config lints Polish with the rules in `styles/WritePL/` and seven of the English ones, such as `SessionLabels`, which flags labels like `Phase A`. The skill runs both through `lint.sh`. For text in another language, `/coldread:write` skips linting and says so.
 
-- **Acronyms**: add the ones every reader of yours knows to `exceptions` in `styles/Write/Acronyms.yml` or `styles/WritePL/Acronyms.yml`, in quotes. YAML reads an unquoted `NULL` or `YES` as a value, which silently disables the rule. Terms that only one project's readers know belong in that project's own layer, described below.
+- **Acronyms**: add the ones every reader of yours knows to `exceptions` in `styles/Write/Acronyms.yml` or `styles/WritePL/Acronyms.yml`, in quotes. YAML reads an unquoted `NULL` or `YES` as a value, which silently disables the rule. Terms that only one project's readers know belong in that project's `.coldread/` folder, from step 3 of the setup.
 - **A noisy rule**: change its `level:` to `suggestion`, which the skill treats as a hint rather than something to fix, or delete its file.
 
 Your edits apply only when the plugin runs from your clone, as set up in the section above.
-
-### A project's own rules and examples
-
-A repository can add its own layer without changing the plugin. `/coldread:write` uses these files when they exist, and each one is optional:
-
-| File in the repository | What it does |
-|---|---|
-| `.coldread/vale/styles/config/vocabularies/Project/accept.txt` | Lists terms the project's readers use daily, one per line, so Vale stops flagging them, for example as acronyms to spell out. |
-| `.coldread/vale/styles/Project/*.yml` | Adds the project's own Vale rules, such as product names it must spell one way. |
-| `.coldread/examples-en.md` and `.coldread/examples-pl.md` | Holds style anchors from the project's own texts, which the skill reads instead of the invented ones. |
-
-Commit the folder to share it with the team, or keep it out of git for yourself.
 
 ## Claude.ai and ChatGPT
 
