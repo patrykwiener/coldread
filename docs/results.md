@@ -513,3 +513,56 @@ After the runs above, the review rules gained one sentence: when a project's rev
 - Review in the user's voice: the judge failed comments whose question is phrased as a request, such as "Add one that expects 10.13?", although every comment ended with a question mark. The user's own style ends that way, so the grader is now a pattern that fails any comment not ending in "?". With it, both arms passed every grader in 3 of 3 runs. A style quoted in the request is enough for Claude without the skill, so this case does not test the real use: a note in the user's CLAUDE.md, which evals do not load. The "3 against 1" for questions in the full run above was measured with the old grader.
 
 These checks cost $2.98 at list price.
+
+## 2026-10-13: structure cases, before any change
+
+This run is the baseline for the structure plan in `docs/research/structure-plan.md`: three new cases that test document type, splitting and headings, measured before `write` changes. The skill raised the three cases from 50% to 64% on average, but it scored lower than no skill on the ADR case, because it rewrote the ADR's fixed sections.
+
+Setup: Claude Code 2.1.287, the default agent model Claude Opus 5.5, Sonnet as judge, 3 cases, 3 runs per arm, Write allowed but not Bash. Bash was blocked because the Docker credential store on this computer holds a symbolic link, so the skill skipped Vale, the word count and the facts check in both arms. The final runs cost $4.07.
+
+| Case | With skill | Without | Difference |
+|---|---|---|---|
+| write-headings-carry-en | 100% | 58% | +42 |
+| write-runbook-split-en | 50% | 25% | +25 |
+| write-adr-one-decision-en | 42% | 67% | −25 |
+| All cases | 64% | 50% | +14 |
+
+The graders that matter for the plan, as runs passed out of 3, with the skill against without:
+
+- The runbook keeps the migration history and the open questions out: 0 against 0. The skill put them under Details at the end of runbook.md in every run, so Details took in material for another document.
+- The skill told the user where that material belongs: 0 against 1.
+- The ADR has Context, Decision and Consequences in order: 0 against 3. The skill replaced the fixed sections with sentence headings, such as "Jobs live in Postgres because they must commit with their data", because its rule that headings say something does not know that an ADR has fixed sections.
+- The ADR file holds one decision: 0 against 0. Both arms wrote both decisions into the one file the prompt named; two of three runs in each arm told the user that the notes hold two decisions.
+- The design doc's headings alone tell the decision, the rejected options and the approval: 3 against 1. Generic headings such as "Overview": none in 3 runs against 2 runs with one.
+
+Three graders changed before these numbers, after a first run showed they judged unfairly:
+
+- `steps-kept` asked for four mitigation steps with commands, but the fourth step, escalation, has no command, so the judge failed complete runbooks. It now names the three commands and the escalation.
+- `goals-first` looked for the words "Goal" and "Alternatives" in headings, and failed sentence headings such as "Why not one global limit or a limit per IP address". It is now an LLM grader that checks the order of the content.
+- The ADR graders had no file to read, so the judge saw only Claude's final message. The prompt now names the file, `doc/adr/0007-job-system.md`, and the graders read it. A new regex grader fails the file when it also holds the retry policy.
+
+What this run does not show:
+
+- Three runs per arm is little, so one run moves a grader by 33 points.
+- The ADR prompt names one file, which pushes both arms to write one file. The case tests whether Claude says that the notes hold two decisions, not whether it writes two files unasked.
+- The same author wrote the cases, the graders and the plan.
+
+## 2026-10-13: fixed sections for an ADR
+
+The skill now treats the sections everyone expects in an ADR as a template, from the new `channels/doc-types.md`: Status, Context, Decision and Consequences keep their names, and the first sentence under each carries the claim. This fixed the ADR case, which went from 42% to 100% with the skill, and the two older template cases did not get worse.
+
+Setup as in the baseline above: Sonnet as judge, 3 runs per arm, Write allowed but not Bash. The run cost $4.07.
+
+| Case | With skill | Without | Baseline with skill |
+|---|---|---|---|
+| write-adr-one-decision-en | 100% | 50% | 42% |
+| write-pr-template-en | 100% | 100% | not run |
+| write-design-notes-en | 100% | 50% | not run |
+
+What changed in the ADR case, as runs passed out of 3 with the skill, against the baseline:
+
+- Context, Decision and Consequences in order: 3 against 0.
+- The file holds one decision: 3 against 0. The skill wrote the queue decision to `doc/adr/0007-job-system.md` and drafted the retry policy as a second ADR in its report.
+- Claude told the user that the notes hold two decisions: 3 against 2.
+
+In one run Claude said it could not save the second ADR as a file, although Write was allowed; it showed the draft in its report instead. The ADR also added a reason the notes did not give, that a message broker cannot take part in a Postgres transaction. Neither is graded here.
