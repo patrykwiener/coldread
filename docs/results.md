@@ -680,3 +680,26 @@ What the skill adds, from reading all 10 texts with the skill:
 Without the skill, 3 of 5 rewrites say the migration happened at the 2 June cutover, which the source does not say; no rewrite with the skill does. The binary grader hides this difference.
 
 This corrects the earlier entries: the 5 of 5 failures there came partly from the graders, and the ADR claims are additions the report already lists, not claims passed off silently.
+
+## 2026-10-13: the claim rule, measured with narrow graders
+
+The claim check now asks for a mark in the text, such as "(to confirm)", on every claim about the user's system that has no source: an inferred consequence, an added recommendation, a definition applied to the system, or a completed detail such as a year. General facts about a named tool need no mark but go in the report. The maintainer chose this rule over marking everything or marking nothing.
+
+Broad graders that judged "any new information" failed texts that a direct question to the same model passed, word for word, with no single sentence to blame: they flagged a text for mentioning a topic from their own list of examples, even as a question. So each case now has narrow graders, each asking about one kind of addition, calibrated twice on hand-labelled texts in `plugins/coldread/evals-calibration/`. One real rewrite stayed unstable and was dropped from the calibration set as truly borderline.
+
+| Case | Check | With skill | Without |
+|---|---|---|---|
+| write-rewrite-facts | migration and cutover kept apart | 5 of 5 | 0 of 5 |
+| write-rewrite-facts | no invented cause of duplicates | 5 of 5 | 2 of 5 |
+| write-rewrite-facts | no invented design of the pipeline | 4 of 5 | 0 of 5 |
+| write-adr-one-decision-en | no year added to "3 September" | 5 of 5 | 0 of 5 |
+| write-adr-one-decision-en | recommendation to revisit marked or absent | 4 of 5 | 0 of 5 |
+| write-pr-claims-en, held-out | no unmarked claim on locks, production or cost | 14 of 15 | 15 of 15 |
+
+The year rule was added after a run in which every ADR with the skill dated the decision "3 September 2026". The runs in this entry cost about $16, and the calibration rounds about $20.
+
+What this does not show:
+
+- The held-out PR case shows no gain: without the skill, Claude also kept to the notes. Its graders were also rewritten after its first run, because the broad grader failed texts the model itself judged clean, so it is not a blind test any more.
+- The ADR grader for database load could not be calibrated. After the rule that a necessary consequence is a fact, "job traffic adds reads and writes to the database" passes and a claim about how much load fails; but on two real ADRs whose load sentence carried a mark, the judge split. That grader stays in the case as an indicator, and the 3 of 5 ADRs it failed before the change mark the amount of load and state only that queries exist.
+- Narrow graders catch only the kinds of additions they name. A new kind of invented claim needs a new grader.

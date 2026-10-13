@@ -25,5 +25,5 @@ Accepted on 3 September.
 
 ## Consequences
 
-A job and the data it changes commit together, and there is no separate broker to run. Job traffic probably adds load to the main Postgres database; this is an assumption, not measured.
+A job and the data it changes commit together, and there is no separate broker to run. Job traffic may add significant load to the main Postgres database and slow the application's queries; this is an assumption, not measured.
 -----

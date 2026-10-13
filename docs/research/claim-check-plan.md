@@ -17,6 +17,6 @@ The full run on 2026-10-13 failed `no-invented-claims` in 5 of 5 runs of two cas
 | 1. Calibrate the graders | done: 48 of 48 judgements match their labels over two rounds |
 | 2. Baseline | done: the claims grader fails 5 of 5 in both arms of both cases |
 | 3. Sort the added claims | done: general tool facts, inferred consequences and recommendations; all listed in the report, none marked in the text |
-| Decide the rule | waiting for the maintainer: mark additions in the text, or list them in the report only |
-| 4. Change the rule | not started |
-| 5. Full run | not started |
+| Decide the rule | done: mark claims about the user's system in the text; general tool facts only in the report |
+| 4. Change the rule | done: rewrite and ADR additions now marked or gone; graders split into narrow, calibrated checks; one load grader stays uncalibrated |
+| 5. Full run | next |
