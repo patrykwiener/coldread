@@ -642,8 +642,8 @@ Setup: Claude Code 2.1.287, the default agent model Claude Opus 5.5, Sonnet as j
 
 What the held-out cases show, as runs passed out of 5 with the skill:
 
-- The Polish runbook kept the history and the open question out in 5 of 5, and named a design doc or an ADR for them; without the skill, the history stayed in.
-- The design doc with on-call steps mixed in kept the full steps out in 3 of 5, and every run said the on-call steps belong in a separate runbook. But 4 of 5 still named `thumbctl` in a short section on operations, and 2 of those 4 gave its commands. The rule says what a design doc leaves out but not that a pointer must not repeat the commands, and this was not tuned after the run.
+- The Polish runbook kept the history and the open question out in 5 of 5, and named a design doc or an ADR for them. Without the skill, the history stayed in 1 of 5 runs, and 2 of 5 dropped it without telling the user.
+- The design doc with on-call steps mixed in left out all three on-call steps in 4 of 5 runs, and 4 of 5 files say that the steps go in a separate runbook. But 4 of 5 still named `thumbctl` in a short section on operations, and 2 of those 4 gave some of its commands; 1 run gave all three. The rule says what a design doc leaves out but not that a pointer must not repeat the commands, and this was not tuned after the run.
 - The PR description used no document sections, such as Context or Goals, in 5 of 5, and opened with the final state, not the history, in 5 of 5.
 
 Graders that failed with the skill in 3 or more of 5 runs:
