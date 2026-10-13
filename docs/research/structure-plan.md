@@ -18,9 +18,10 @@
 | 1. Eval cases and baseline | done: 64% with the skill, 50% without; see `docs/results.md`, 2026-10-13 |
 | 2a. Fixed sections for an ADR | done: the ADR case went from 42% to 100%; see `docs/results.md` |
 | 2b. Control case for the ADR rule | done: the team's MADR template wins in 3 of 3 runs; ADRs still add unsourced claims, a gap in the claim check |
-| 2c. Runbook and design doc in `doc-types.md`, the kind of document named in the Channel line | next |
+| 2c. Runbook and design doc in `doc-types.md`, the kind of document named in the Channel line | done: the runbook case went from 50% to 100% |
+| Rules frozen | three held-out cases written before any run of them: `write-runbook-pl`, `write-design-ops-mixed-en`, `write-pr-history-en` |
 | Outline | postponed: the evals cannot measure it, and headings already pass |
 | 3. Split signals | not started |
 | 4. Headings-only check | not started |
-| 5. Measure again | not started |
+| 5. Measure again | next: every case, 5 runs per arm, ideally with Bash |
 | 6. Decide on `plan-docs` | not started |
