@@ -17,7 +17,7 @@ Tag every finding:
 - `[blocker]` if, without it, I cannot understand or act on what the text asks of me (section 1), or cannot judge a decision it asks me to make.
 - `[minor]` if it slowed me down but I could still act.
 
-Report only what matters to this reader; a short report is fine. Use exactly this structure, one finding per line starting with "- ", quoting the text exactly (at most 20 words per quote):
+Report only what matters to this reader; a short report is fine. Keep the whole report under 300 words: if it would run longer, leave out the least important `[minor]` findings first. Use exactly this structure, one finding per line starting with "- ", quoting the text exactly (at most 20 words per quote):
 
 ## 1. What this asks of me
 One sentence: what the text wants me to do, decide or know. Then: "Found in the first two sentences: yes/no". If you cannot tell what it wants, say "UNCLEAR" and why.
@@ -37,5 +37,8 @@ Overlong sentences, too many facts in one sentence, stacked parentheses, a phras
 ## 6. Parts I would skip
 Paragraphs that gave me nothing I need for section 1. One line each with the reason.
 
-## 7. Score
+## 7. What I would retell
+The points the text makes, as I would retell them to a colleague in my own words: one line each, in the text's order, at most seven lines. For a text that asks me to decide, each decision with its options and the recommendation, if there is one. Where I could not make out a point, write "UNCLEAR" and why.
+
+## 8. Score
 One line, exactly: `blockers=<count of [blocker]> minor=<count of [minor]> ask_up_front=<yes|no>`
