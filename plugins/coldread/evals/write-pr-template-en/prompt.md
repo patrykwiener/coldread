@@ -1,12 +1,12 @@
 ---
-description: PR description in the project's template, whose last section is for a product manager; checks section order, a plain product section and the split between tests run and not run. Needs --allow-tools Write Bash.
+description: PR description in the project's template, saved to pr.md, whose last section is for a product manager; checks section order, a plain product section and the split between tests run and not run. Needs --allow-tools Write Bash.
 tags: [write, en, template]
 max_turns: 40
 timeout_seconds: 900
 allowed_tools: [Skill, Agent, Read, Glob, Grep, Write, Bash]
 ---
 
-Write the PR description for this change. The reviewer reads all of it; our product manager reads only the last section. Use our PR template exactly:
+Write the PR description for this change and save it to pr.md. The reviewer reads all of it; our product manager reads only the last section. Use our PR template exactly:
 
 ## Summary
 ## Changes

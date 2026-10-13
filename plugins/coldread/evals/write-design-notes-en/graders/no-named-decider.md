@@ -1,7 +1,8 @@
 ---
-type: llm
+type: regex
+target:
+  source: file
+  path: status.md
+pattern: '\bHank\b|\b(?:[Oo]r|[Aa]nd|[Aa]sks?|[Pp]ing|[Tt]ell|[Ww]ith|[Ff]rom|[Bb]y)\s+Will\b|\bWill\s+(?:or|and)\b'
+match: not_contains
 ---
-
-Find the section Claude wrote. Ignore Claude's notes to the user before or after it, which may mention anyone.
-PASS if the section itself does not name Hank or Will.
-FAIL if the section names either of them, for example as someone who could decide.
