@@ -591,3 +591,23 @@ What the ADR case still shows:
 
 - A new grader, `no-invented-claims`, failed in 3 of 3 runs in both arms. The ADRs state claims the notes do not give as plain fact, such as "A separate broker such as RabbitMQ cannot join a Postgres transaction" and "Job traffic adds to the load on that Postgres database". The skill's claim check should cut these or mark them as not verified, and it does not in an ADR. This is a gap in the claim check, outside the structure plan.
 - One run with the skill left `## Status` empty, so the acceptance date was lost; `status-present` checks only the heading. The same run also lost why another broker was not wanted, which `why-kept` caught.
+
+## 2026-10-13: runbooks and design docs in doc-types.md
+
+`channels/doc-types.md` now covers runbooks and design docs as well as ADRs. A runbook keeps a fixed order, from what the alert means to escalation, and leaves out history and open design questions; a design doc keeps Ubl's order with headings that state conclusions. Material meant for another document no longer goes under Details: the skill names that document and its file in the report and asks. The runbook case went from 50% to 100% with the skill.
+
+Setup as in the baseline above. The runs cost $8.45.
+
+| Case | With skill | Without | With skill before this step |
+|---|---|---|---|
+| write-runbook-split-en | 100% | 42% | 50% |
+| write-headings-carry-en | 100% | 75% | 100% |
+| write-adr-one-decision-en | 83% | 56% | 78% |
+| write-adr-madr-template-en | 100% | 78% | 100% |
+| write-pr-template-en | 100% | 100% | 100% |
+
+In the runbook case the migration history and the open questions stayed out of runbook.md in 3 of 3 runs with the skill and 0 of 3 without, and the skill named a design doc or an ADR for them in all 3.
+
+The design doc case first scored 92%: one run used the heading "Alternatives considered", the label in the list of Ubl's sections, and its headings no longer said that the platform team must approve the Redis memory. The list now describes what each section holds instead of naming it, with an example of a heading that states a conclusion, and the case went back to 3 of 3. That fix rests on one run, so the full run with 5 runs per arm decides whether it holds.
+
+The ADR case still fails `no-invented-claims` in every run of both arms; see the entry above.
