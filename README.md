@@ -10,7 +10,7 @@ Claude knows what its own working labels mean, and the reader does not. In the e
 
 | Part | When it works | What it does |
 |---|---|---|
-| `/coldread:write` | starts on its own when you ask for a PR description, a review, a doc, a message or a prompt for a new session | Sets a brief, drafts, checks that every claim has a source, lints the text with Vale, a linter for prose, then hands it to the cold reader. |
+| `/coldread:write` | starts on its own when you ask for a PR description, a review, a doc, a message or a prompt for a new session | Sets a brief, drafts, checks that every claim has a source and marks the ones it could not trace, lints the text with Vale, a linter for prose, then hands it to the cold reader. An ADR, a runbook or a design doc gets the sections its readers expect, and material meant for another document is named in the report instead of filling the text. |
 | `coldread:cold-reader` | inside `/coldread:write` | A subagent with no session and no CLAUDE.md that reads the text once and reports what it could not follow. |
 | `/coldread:reply` | when someone sent you a message you must answer | Says what the sender asks, resolves the names you may not know, then drafts your reply. |
 | `/coldread:plain` | when an answer did not land | Names what failed, such as an unknown term, then explains again in new words. |
@@ -18,7 +18,7 @@ Claude knows what its own working labels mean, and the reader does not. In the e
 
 ## What the evals show
 
-Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 11 writing cases, `/coldread:write` passed 90% against 65% without it. Bash was blocked on that computer, so the run measured the skill without Vale, the word count and the facts check. The run before, with Vale on another computer, passed 90% against 53% on 8 cases. Each text cost about three times as much as without the skill.
+Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 19 writing cases, 5 runs each, `/coldread:write` passed 92% against 66% without it. Seven cases test document structure, such as a runbook that leaves design history out, and three of them were written before any run, to check the rules on text they were not tuned on. Bash was blocked on that computer, so the run measured the skill without Vale, the word count and the facts check. An earlier run with Vale on another computer passed 90% against 53% on 8 cases. Each text cost about three times as much as without the skill.
 
 One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
 

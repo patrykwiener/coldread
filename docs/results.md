@@ -703,3 +703,23 @@ What this does not show:
 - The held-out PR case shows no gain: without the skill, Claude also kept to the notes. Its graders were also rewritten after its first run, because the broad grader failed texts the model itself judged clean, so it is not a blind test any more.
 - The ADR grader for database load could not be calibrated. After the rule that a necessary consequence is a fact, "job traffic adds reads and writes to the database" passes and a claim about how much load fails; but on two real ADRs whose load sentence carried a mark, the judge split. That grader stays in the case as an indicator, and the 3 of 5 ADRs it failed before the change mark the amount of load and state only that queries exist.
 - Narrow graders catch only the kinds of additions they name. A new kind of invented claim needs a new grader.
+
+## 2026-10-13: the full suite after the claim rule, 5 runs per arm
+
+The whole suite ran again after the claim rule: 19 cases, 5 runs per arm. The skill passed 92% of the checks against 66% without it, against 93% and 65% in the full run before the rule. The run took 40 minutes and cost $42.72; setup as in that run.
+
+| Case | With skill | Without | With skill, run before |
+|---|---|---|---|
+| write-adr-one-decision-en | 91% | 56% | 83% |
+| write-rewrite-facts | 97% | 77% | 75% |
+| write-pr-claims-en | 100% | 100% | new |
+| write-trigger-pl | 60% | 0% | 100% |
+| write-runbook-pl | 75% | 60% | 90% |
+| write-headings-carry-en | 90% | 55% | 95% |
+| write-review-comments-en | 95% | 50% | 100% |
+| All cases | 92% | 66% | 93% |
+
+The other 12 cases moved by at most one run of 5. The two cases that dropped are not explained by the claim rule:
+
+- `write-trigger-pl` grades Claude's whole final message. In 2 of 5 runs Claude opened the message with a note that it could not save a file, and the judge read that note as the first sentences of the PR description, which itself opens with the fix and the ask. The grader should read a saved file, as the rewrite case now does.
+- `write-runbook-pl` failed `design-moved` in 2 of 5 runs in which Claude named an ADR for the history in its report but kept one sentence in the runbook, that a worker reads the webhooks from a Kafka queue, because the runbook uses the word partition. Whether that sentence is history or what the on-call engineer needs is a judgment call.
