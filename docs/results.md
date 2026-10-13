@@ -611,3 +611,51 @@ In the runbook case the migration history and the open questions stayed out of r
 The design doc case first scored 92%: one run used the heading "Alternatives considered", the label in the list of Ubl's sections, and its headings no longer said that the platform team must approve the Redis memory. The list now describes what each section holds instead of naming it, with an example of a heading that states a conclusion, and the case went back to 3 of 3. That fix rests on one run, so the full run with 5 runs per arm decides whether it holds.
 
 The ADR case still fails `no-invented-claims` in every run of both arms; see the entry above.
+
+## 2026-10-13: the full suite after the structure changes, 5 runs per arm
+
+With the structure rules frozen, the whole suite ran once: 18 cases, 5 runs per arm, including the three held-out cases written before any run of them. The skill passed 93% of the checks against 65% without it. The held-out runbook and design doc gained 35 and 40 points, the held-out PR description shows no leak of the document rules, and no older case got worse by more than one run.
+
+Setup: Claude Code 2.1.287, the default agent model Claude Opus 5.5, Sonnet as judge, 5 runs per arm, Write allowed but not Bash, so Vale, the word count and the facts check did not run in either arm. The run took 35 minutes and cost $39.19.
+
+| Case | With skill | Without | Kind |
+|---|---|---|---|
+| write-runbook-pl | 90% | 55% | held-out |
+| write-design-ops-mixed-en | 75% | 35% | held-out |
+| write-pr-history-en | 93% | 93% | held-out |
+| write-runbook-split-en | 90% | 40% | structure |
+| write-headings-carry-en | 95% | 75% | structure |
+| write-adr-one-decision-en | 83% | 63% | structure |
+| write-adr-madr-template-en | 93% | 93% | structure |
+| write-trigger-pl | 100% | 0% | older |
+| write-explain-en | 100% | 47% | older |
+| write-review-comments-en | 100% | 50% | older |
+| write-design-notes-en | 100% | 50% | older |
+| write-slack-pm-pl | 96% | 60% | older |
+| write-pr-template-en | 100% | 95% | older |
+| write-pr-en | 93% | 87% | older |
+| write-review-voice-en | 100% | 100% | older |
+| write-prompt-handoff-en | 100% | 100% | older |
+| reply-decode-pl | 85% | 70% | older |
+| write-rewrite-facts | 75% | 65% | older |
+| All cases | 93% | 65% | |
+
+What the held-out cases show, as runs passed out of 5 with the skill:
+
+- The Polish runbook kept the history and the open question out in 5 of 5, and named a design doc or an ADR for them; without the skill, the history stayed in.
+- The design doc with on-call steps mixed in kept the full steps out in 3 of 5, and every run said the on-call steps belong in a separate runbook. But 4 of 5 still named `thumbctl` in a short section on operations, and 2 of those 4 gave its commands. The rule says what a design doc leaves out but not that a pointer must not repeat the commands, and this was not tuned after the run.
+- The PR description used no document sections, such as Context or Goals, in 5 of 5, and opened with the final state, not the history, in 5 of 5.
+
+Graders that failed with the skill in 3 or more of 5 runs:
+
+- `no-invented-claims` in the ADR case and in `write-rewrite-facts`: 5 of 5 each. The skill states explanations the notes do not give as plain fact. This is the gap in the claim check named in the entries above.
+- `no-invented-ticket` in `reply-decode-pl`: 3 of 5.
+- `no-ops-steps` in the held-out design doc: 4 of 5, as above.
+
+The older cases moved within one run of the last full run on 2026-10-13: for example `write-pr-en` lost one run of 5 on `ask-first`, and `write-review-comments-en` went from 92% to 100%. Three of five runs of `write-runbook-split-en` and four of five of `write-headings-carry-en` passed every grader, so the earlier 3-of-3 results there were partly luck.
+
+What this run does not show:
+
+- One author wrote the rules, the cases and the graders, the held-out ones included.
+- Bash was off, so the steps that need a shell were not measured.
+- The `ops-moved` grader of the held-out design doc reads only Claude's final message, so it passed runs whose file still held the commands; `no-ops-steps` reads the file.

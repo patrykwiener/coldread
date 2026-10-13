@@ -23,5 +23,6 @@
 | Outline | postponed: the evals cannot measure it, and headings already pass |
 | 3. Split signals | not started |
 | 4. Headings-only check | not started |
-| 5. Measure again | next: every case, 5 runs per arm, ideally with Bash |
-| 6. Decide on `plan-docs` | not started |
+| 5. Measure again | done: 93% with the skill, 65% without, over 18 cases and 5 runs per arm; held-out runbook +35, design doc +40 |
+| 6. Decide on `plan-docs` | next |
+| Claim check | open: explanations not in the notes stated as fact, 5 of 5 in two cases |
