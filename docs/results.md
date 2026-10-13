@@ -436,3 +436,80 @@ No text put the attribution line after the last section, and all 6 reports say t
 - One text opens with a paragraph above Summary, which the template does not have. The judge failed its section order by 4 votes to 0.
 - One text has nothing outside the template's sections, and the judge failed its section order by 2 votes to 1.
 - One product section says that users without a timezone get reminders at "9 in the morning UK winter time" instead of at 09:00 UTC. A text from the skill on main did the same in the run above.
+
+## 2026-10-13: channels, the user's voice, replies and OpenCode, without shell steps
+
+/coldread:write scored 90% on 11 cases with the skill and 65% without it. Bash was blocked on this computer, so the skill ran without Vale, the word count and the facts check. Two new behaviours went wrong, a date kept in the design doc and a reply skill that asked instead of drafting. Both were fixed and measured again, in the next section.
+
+Changes since the last run:
+
+- The rules for a review, an explainer, a prompt for a new agent session, and long documents, sets and decision documents moved to files in `channels/`. The skill reads the file when the brief's channel calls for it.
+- When a text goes out under the user's name, a How I write note in the user's instructions wins over the skill's own shape, such as its labels on review comments.
+- The cold reader keeps its report under 300 words and retells the text's points, and the skill compares that retelling with the brief.
+- A rewrite runs `facts.sh`, which lists the numbers and code spans that left the text. The skill never posts, sends or commits a text.
+- `/coldread:reply` reads a message the user received and drafts the answer.
+- Graders that a pattern can decide now use `regex` on a file the case asks Claude to save: in the design doc and template cases, and in two of the three new write cases.
+
+Setup: Claude Code 2.1.287 on a third computer, the default agent model, Sonnet as judge, 11 cases, 3 runs per arm, `--allow-tools Write`. The Bash sandbox refused to start because `~/.docker/cli-plugins` holds links into Docker Desktop, and pointing `DOCKER_CONFIG` at an empty folder did not help. The run took 11.8 minutes and cost $13.00 at list price. A run with the skill cost 2.7 times as much as one without.
+
+| Case | With skill | Without |
+|---|---|---|
+| write-trigger-pl | 100% | 0% |
+| write-explain-en | 100% | 44% |
+| write-review-comments-en | 92% | 50% |
+| write-slack-pm-pl | 93% | 60% |
+| write-design-notes-en | 83% | 61% |
+| write-review-voice-en | 100% | 83% |
+| write-rewrite-facts | 75% | 58% |
+| write-pr-en | 100% | 100% |
+| write-pr-template-en | 100% | 100% |
+| write-prompt-handoff-en | 100% | 100% |
+| reply-decode-pl | 50% | 58% |
+| All cases | 90% | 65% |
+
+What held after the move to channel files, as runs passed out of 3 with the skill against without:
+
+- Explainer: terms explained with examples 3 against 1, and one case followed from start to end 3 against 0.
+- Review: comments of at most three sentences 3 against 0, and the nice-to-have kept out of GitHub 3 against 0. One review stated that no test covers month-first files but did not ask for one, because the notes did not say the test belonged to this pull request. Its report said so.
+- Voice: every comment ended on a question 3 against 1. Both arms kept labels and bold out, so a style quoted in the request is enough for Claude without the skill.
+
+What went wrong:
+
+- Design doc: all 3 texts with the skill kept the date of the re-check, as in "As of 6 October 2026, the staging numbers still hold". In the run on the second computer, none did. The cause was a sentence added to the skill: keep a date, "as of", when nothing else anchors a fact about a running environment. A narrower version of the sentence gave the same result in 3 of 3 runs, so the sentence is gone. A project that wants such dates can say so in its own instructions.
+- Reply: in 2 of 3 runs the skill asked which option the user wanted and wrote no reply. Two graders were also stricter than their case. One failed an opening that named Ania's question, because the opening left out how the fix works. The other failed answers that repeated what her message implies about `PAY-212`.
+
+What does not separate the arms yet:
+
+- Template and prompt cases: both arms passed every grader. With section order and the trailer checked by patterns, Claude without the skill gets them right, so the judge's earlier failures there were noise. The prompt case's notes dictate the content, so it needs a harder version.
+- Rewrite: no arm passed the invented-claims grader, as in the runs before.
+
+## 2026-10-13: the fixes
+
+The reply skill now recommends an option, drafts the reply for it and gives the other option's reply in one line. It asks the user first only when it cannot recommend either option. It opens with the sender's request, with no label above it. The ask-first grader no longer asks for how the fix works, and the ticket grader accepts what the message itself implies about `PAY-212`. The date sentence is back to its earlier form.
+
+| Case | With skill | Without |
+|---|---|---|
+| reply-decode-pl | 100% | 67% |
+| write-design-notes-en | 100% | not run |
+
+- Reply: the opening named Ania's request 3 against 0, a draft reply came in 3 against 3, and nothing was invented about the ticket 3 against 2.
+- Design doc: no text kept the date of the re-check, against 3 of 3 with the added sentence.
+
+The two runs above cost $2.11 at list price, and the run of the narrower date sentence $0.90.
+
+## 2026-10-13: chat rule 10, questions that stand alone
+
+The chat rules gained a tenth rule: a question to the user says what it is about, why it is needed, its options and what Claude will do without an answer. A new Polish case hands Claude its own notes, full of labels such as `F03` and "decyzja 2", and asks what the user must answer. With the rules the case scored 100%, without them 67%: 3 runs per arm, Sonnet as judge, $0.50 at list price.
+
+The whole difference is the default. With the rules, 3 of 3 answers said what Claude would do without an answer, against 0 of 3. Both arms named each question's subject in plain words and gave its options. Without the rules, every answer still led each question with its label, as in "`F03`, limit uploadu", which the grader allows next to plain words.
+
+What this does not show: the notes in the case explain each label, so Claude without the rules can copy those words. A case whose labels Claude coined earlier in the same session would test the rule harder.
+
+## 2026-10-13: the review cases again, before the push
+
+After the runs above, the review rules gained one sentence: when a project's review style and the user's How I write note disagree, the project's style wins in that project. The two review cases then ran again with the skill, 3 runs each.
+
+- Review comments: 100%. The missing test was asked for in 3 of 3 runs, against 2 of 3 in the full run.
+- Review in the user's voice: the judge failed comments whose question is phrased as a request, such as "Add one that expects 10.13?", although every comment ended with a question mark. The user's own style ends that way, so the grader is now a pattern that fails any comment not ending in "?". With it, both arms passed every grader in 3 of 3 runs. A style quoted in the request is enough for Claude without the skill, so this case does not test the real use: a note in the user's CLAUDE.md, which evals do not load. The "3 against 1" for questions in the full run above was measured with the old grader.
+
+These checks cost $2.98 at list price.
