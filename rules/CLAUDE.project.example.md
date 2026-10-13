@@ -8,6 +8,10 @@
 
 The skill takes the reader for its brief from this section. Commit the file, so everyone on the team writes for the same readers.
 
+If your project keeps `CLAUDE.md` out of git and the team shares an `AGENTS.md`, put the section in `AGENTS.md` and import it from your `CLAUDE.md` with the line `@AGENTS.md`. OpenCode reads `AGENTS.md` directly.
+
+The section can also set how the team writes one kind of text, such as review comments. In that project, the skill then follows it instead of its own default shape and instead of a personal How I write note.
+
 A product team that writes in English:
 
 ```markdown
@@ -30,4 +34,12 @@ An open-source library:
 ## Writing
 
 Docs, PR descriptions and issue comments in English, for outside contributors who know Python packaging and pytest, not our internals. Explain each module name where it first appears. Release notes are for users who upgrade the package and never read its code.
+```
+
+A team with its own review style:
+
+```markdown
+## Writing
+
+Documents in English, for developers on the team who know the codebase and Azure DevOps. Review comments: label each one blocking or non-blocking in its first word, at most two sentences, and give the fix as code when it is one.
 ```

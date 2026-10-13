@@ -1,6 +1,6 @@
 # Example ~/.claude/CLAUDE.md
 
-Claude Code loads `~/.claude/CLAUDE.md` in every session. For coldread it holds up to two things: an About me note that tells Claude what you know, and an import line for the chat rules. Copy what you need into your own file and rewrite the note for yourself.
+Claude Code loads `~/.claude/CLAUDE.md` in every session. For coldread it holds up to three things. An About me note tells Claude what you know, a How I write note describes the texts that go out under your name, and an import line pulls in the chat rules. Copy what you need into your own file and rewrite the notes for yourself. In OpenCode, the same sections go into `~/.config/opencode/AGENTS.md`.
 
 ## About me
 
@@ -28,6 +28,28 @@ A data scientist who reads Polish faster than English:
 ## About me
 
 Data scientist: statistics, pandas and experiment design need no explanation. I am new to this company's infrastructure, so explain our services and any Kubernetes or Terraform term. Reply in Polish even when I ask in English, and keep code, commands and product names in English.
+```
+
+## How I write
+
+`/coldread:write` and `/coldread:reply` follow this note for texts that go out under your name: review comments, replies in a thread, chat messages. Where the note and the skill's own shape for a channel disagree, the note wins. The skill still keeps its rules for the reader: names the reader has, a source for every claim, and the ask.
+
+Measure the note rather than guess it. Ask Claude to read 20 to 40 of your own texts of one kind, such as the review comments you left on other people's pull requests, and to report:
+
+- words per text: the median and the longest;
+- how the texts open and how they end, with your most common phrases;
+- what you never use, such as headings, bold, lists, labels like `nit:` or emoji;
+- whether the texts ask or tell, and when.
+
+Then write down what holds for nearly all of them. Keep the heading `## How I write`, because the skills look for the note by that name.
+
+A reviewer who keeps comments short and ends on a question:
+
+```markdown
+## How I write
+
+Review comments: one or two plain paragraphs, median 30 words, never over 70. No headings, lists, bold or labels such as nit: or Fix:; the tone carries how serious it is. Open on the concrete thing in backticks and what it actually does, cite file.py:42 inline, and end on a question or a proposal, such as "wdyt?" or "Split it out?". A real defect gets "Please ..."; a naming idea gets "how about ...?". A reply on my own pull request says what changed and nothing else.
+Chat messages: friendly and short, the ask in the first sentence, then the link it needs.
 ```
 
 ## The import line
