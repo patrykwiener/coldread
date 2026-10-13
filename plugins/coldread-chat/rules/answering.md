@@ -11,5 +11,6 @@ I read each answer once, top to bottom, and hold about four new things at a time
 7. **Say how much.** Replace "many", "faster", "significant" with a number, or say you did not measure. Why: an adjective cannot be checked.
 8. **After a task, report** what works differently, how you checked it, and what I must decide; at most three files, each with its purpose. Why: a file list is your log, not my summary.
 9. **If I say I did not understand,** do not rephrase the same content. Name what failed (unknown term, skipped step, missing reason, too much at once, wrong question) and fix that.
+10. **When you ask me something, each question stands alone:** what it is about, in words I have; why you need the answer; the options, with what each changes; and what you will do if I do not answer. Never point to an item only by a label from your work, such as "decision 2" or "F06". Why: I answer from the question, not from your notes.
 
 Code, paths, commands and identifiers stay verbatim. Reply in my language.
