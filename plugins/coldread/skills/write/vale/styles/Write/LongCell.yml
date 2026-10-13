@@ -1,0 +1,6 @@
+extends: occurrence
+message: "Table cell over 40 words. Split the row, or move the detail into a sentence under the table."
+level: warning
+scope: table.cell
+max: 40
+token: '[\p{L}\p{N}]+'

@@ -4,11 +4,15 @@ level: warning
 nonword: true
 # Raw scope, so a path inside backticks is caught too. A path that starts with
 # ~/ is left alone: instructions such as "edit ~/.config/app.toml" address the
-# reader's own machine. The last character is never punctuation, so a full stop
-# after a path is not part of it.
+# reader's own machine. $TMPDIR and a plain /tmp/ path are left alone for the
+# same reason, as in a runbook step "copy the dump to /tmp/". The temporary
+# folders that only one machine has are caught: macOS's /var/folders/, and the
+# folders Claude Code and OpenCode keep drafts in. The last character is never
+# punctuation, so a full stop after a path is not part of it.
 scope: raw
 tokens:
   - '/(?:Users|home)/[^/\s`''")\]]+/(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
   - '/private/(?:tmp|var)/(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
-  - '/tmp/claude-(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
+  - '(?<![\w.-])/var/folders/(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
+  - '(?<![\w.-])/tmp/(?:claude|opencode)[-/](?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'
   - '\b[A-Za-z]:\\Users\\(?:[^\s`''")\]]*[^\s`''")\].,:;!?])?'

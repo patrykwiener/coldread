@@ -1,4 +1,6 @@
-# An example rule: replace the names with your own products.
+# An example rule: replace the names with your own products. Do not list a
+# name that this rule enforces in accept.txt: Vale then accepts every spelling
+# of it, and the rule never fires.
 extends: substitution
 message: "Write the product name as '%s', not '%s'."
 level: warning
