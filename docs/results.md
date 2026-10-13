@@ -566,3 +566,28 @@ What changed in the ADR case, as runs passed out of 3 with the skill, against th
 - Claude told the user that the notes hold two decisions: 3 against 2.
 
 In one run Claude said it could not save the second ADR as a file, although Write was allowed; it showed the draft in its report instead. The ADR also added a reason the notes did not give, that a message broker cannot take part in a Postgres transaction. Neither is graded here.
+
+## 2026-10-13: a control case for the ADR rule, and the claims an ADR adds
+
+The ADR rule was written after reading runs of the case that measures it, so a new case checks it on input it has not seen. `write-adr-madr-template-en` gives the team's own MADR template, a common ADR format with the sections Context and Problem Statement, Considered Options and Decision Outcome. The repository's template won in 3 of 3 runs with the skill: no run fell back to the default Context, Decision and Status sections.
+
+Setup as in the baseline above. The final runs cost $2.50.
+
+| Case | With skill | Without |
+|---|---|---|
+| write-adr-madr-template-en | 100% | 67% |
+| write-adr-one-decision-en | 78% | 67% |
+
+Without the skill, all 3 MADR runs lost a fact from the notes, such as the 15-minute expiry of the presigned URLs.
+
+Changes before these numbers:
+
+- `doc-types.md` now lists Status after Decision, in the order of Nygard's post, which it cites. It had put Status second.
+- The rule for a single named file now says to propose the second ADR with its file name and ask. In the run before, Claude said it could not save the second file, which was not true; no run says so now.
+- `nygard-sections` is now a regex, and `status-present` is new, because the judge failed an ADR whose sections were all present and in order.
+- `no-default-sections` in the MADR case allowed no `### Consequences`, which the MADR template itself has under Decision Outcome. It now forbids only bare Context, Decision and Status headings.
+
+What the ADR case still shows:
+
+- A new grader, `no-invented-claims`, failed in 3 of 3 runs in both arms. The ADRs state claims the notes do not give as plain fact, such as "A separate broker such as RabbitMQ cannot join a Postgres transaction" and "Job traffic adds to the load on that Postgres database". The skill's claim check should cut these or mark them as not verified, and it does not in an ADR. This is a gap in the claim check, outside the structure plan.
+- One run with the skill left `## Status` empty, so the acceptance date was lost; `status-present` checks only the heading. The same run also lost why another broker was not wanted, which `why-kept` caught.

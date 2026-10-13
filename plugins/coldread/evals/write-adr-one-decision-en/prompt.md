@@ -1,5 +1,5 @@
 ---
-description: ADR request whose notes hold two independent decisions, saved to doc/adr/0007-job-system.md; checks that Claude writes or proposes one ADR per decision, and that the first ADR has Status, Context, Decision and Consequences and keeps its reasons. Needs --allow-tools Write Bash.
+description: ADR request whose notes hold two independent decisions, saved to doc/adr/0007-job-system.md; checks that Claude writes or proposes one ADR per decision, and that the first ADR has Context, Decision and Consequences in order and a Status, keeps its reasons and states no claim the notes do not support. Needs --allow-tools Write Bash.
 tags: [write, en, structure, adr]
 max_turns: 40
 timeout_seconds: 900

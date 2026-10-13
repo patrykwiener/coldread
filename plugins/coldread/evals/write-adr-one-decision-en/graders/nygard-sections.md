@@ -1,10 +1,9 @@
 ---
-type: llm
-focus:
+type: regex
+target:
   source: file
   path: doc/adr/0007-job-system.md
+pattern: '^#{2,3} Context\b[\s\S]*^#{2,3} Decision\b[\s\S]*^#{2,3} Consequences\b'
+flags: m
+match: contains
 ---
-
-The file holds the first ADR Claude wrote.
-PASS if it has a Status, and has Context, Decision and Consequences sections in that order, under these or plainly equivalent headings.
-FAIL if it lacks one of them or puts Decision before Context.
