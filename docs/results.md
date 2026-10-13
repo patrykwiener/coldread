@@ -659,3 +659,24 @@ What this run does not show:
 - One author wrote the rules, the cases and the graders, the held-out ones included.
 - Bash was off, so the steps that need a shell were not measured.
 - The `ops-moved` grader of the held-out design doc reads only Claude's final message, so it passed runs whose file still held the commands; `no-ops-steps` reads the file.
+
+## 2026-10-13: the claims graders, calibrated against labelled texts
+
+The two `no-invented-claims` graders failed every run in both arms of the full run above, so they were checked before anything else. Each grader judged hand-labelled texts in `plugins/coldread/evals-calibration/`: clean texts, texts with an invented claim, and an added claim marked in the text as an assumption. With the old wording, the ADR grader failed a clean ADR in 1 of 3 runs and a marked claim in 2 of 3, and the rewrite grader failed the same clean text, word for word, in 5 of 6 runs. Both graders now judge the text sentence by sentence against a list of what is allowed, and every labelled text got its label in 3 of 3 runs in two rounds in a row, 48 judgements in all, with Sonnet as judge. Haiku failed a clean rewrite in 3 of 3 runs, so Sonnet stays the judge. The rewrite case now saves its text to `rewrite.md`, and its graders read only that file.
+
+With the calibrated graders, 5 runs per arm, the two cases still fail the claims grader in 5 of 5 runs in both arms. The runs cost $4.17.
+
+| Case | With skill | Without |
+|---|---|---|
+| write-adr-one-decision-en | 83% | 63% |
+| write-rewrite-facts | 75% | 75% |
+
+What the skill adds, from reading all 10 texts with the skill:
+
+- In the ADR, 5 of 5 explain why RabbitMQ was rejected with a general fact about the tool: a broker cannot take part in a Postgres transaction. 5 of 5 add the consequence that job traffic loads the database, and 4 of 5 add a recommendation to revisit the decision if the load grows.
+- In the rewrite, 3 of 5 turn a definition into a claim about this system, such as "the same item can arrive more than once" or "3 streams handled in parallel".
+- In all 10 runs the report lists these additions and asks the user to confirm or cut them. None marks them in the text, although the claim check in `SKILL.md` asks for both.
+
+Without the skill, 3 of 5 rewrites say the migration happened at the 2 June cutover, which the source does not say; no rewrite with the skill does. The binary grader hides this difference.
+
+This corrects the earlier entries: the 5 of 5 failures there came partly from the graders, and the ADR claims are additions the report already lists, not claims passed off silently.

@@ -11,3 +11,4 @@ plugins/coldread/skills/write/vale/styles/*
 
 # Eval results written by `claude plugin eval`
 plugins/*/evals/results/
+plugins/*/evals-calibration/results/
