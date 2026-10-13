@@ -92,6 +92,8 @@ This repository has an example folder with four sample terms, one rule for a pro
 curl -fsSL https://github.com/patrykwiener/coldread/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 coldread-main/examples/.coldread
 ```
 
+To keep the folder out of a shared repository, put it in a folder above the repository instead, for example next to its worktrees. `/coldread:write` uses the nearest `.coldread/`, starting at the repository's root.
+
 Then replace the samples with your own: your terms in `accept.txt`, your product names in `vale/styles/Project/ProductNames.yml`, and your team's texts in `examples-en.md`. Do not list in `accept.txt` a name that one of your rules spells out: Vale accepts every spelling of a listed term, so the rule would never fire. Commit the folder to share it with the team. To check it, ask for a text that uses one of your terms: the Vale warnings that `/coldread:write` lists at the end should not name it.
 
 ## Use

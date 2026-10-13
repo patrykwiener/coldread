@@ -65,7 +65,7 @@ Language: English (project default)
 
 **Wrap Markdown the way the project does.** If the project has a rule on line wrapping, follow it; otherwise keep the wrapping of the file you edit. In a new file and in a PR or issue description, keep each paragraph on one line and break lines only where the break carries meaning: list items, table rows, code.
 
-Before drafting a PR description, review, handoff note, proposal, explainer or doc, read the style anchors for the text's language and match the register and density of their examples, not their topics. If the repository has its own anchors in `.coldread/examples-pl.md` or `.coldread/examples-en.md`, use those; otherwise use `examples-pl.md` or `examples-en.md` in this skill's directory.
+Before drafting a PR description, review, handoff note, proposal, explainer or doc, read the style anchors for the text's language and match the register and density of their examples, not their topics. If the repository's root, or the nearest folder above it, has its own anchors in `.coldread/examples-pl.md` or `.coldread/examples-en.md`, use those; otherwise use `examples-pl.md` or `examples-en.md` in this skill's directory.
 
 ## 3. Check every claim
 
@@ -97,7 +97,7 @@ Run the rules for the text's language:
 "${CLAUDE_PLUGIN_ROOT}/skills/write/vale/lint.sh" en <file>   # English
 ```
 
-The rules exist for English and Polish. For a text in another language, skip this step and say so in the report. When the repository has a `.coldread/vale/styles` folder, the script also runs the project's own rules from its `Project/` folder and accepts the terms its readers use daily, listed in `config/vocabularies/Project/accept.txt`.
+The rules exist for English and Polish. For a text in another language, skip this step and say so in the report. When the repository's root or a folder above it has a `.coldread/vale/styles` folder, the script uses the nearest one. It runs the project's own rules from its `Project/` folder and accepts the terms its readers use daily, listed in `config/vocabularies/Project/accept.txt`.
 
 Both check mechanically what is cheap to check: undefined acronyms, session labels such as D3, Phase A or Wariant B, bare IDs and issue numbers such as #412, invented tags such as [OPINION], paths on your own machine, the dates on which you checked something, parentheses, semicolons, long sentences (over 30 words in Polish, over 35 in English) and table cells over 40 words. The Polish config adds words AI-generated Polish overuses, forced translations of software terms ("punkt końcowy"), calques from English ("w oparciu o", "adresować problem"), officialese and verbs hidden in nouns ("dokonać zmiany"), filler transitions ("Ponadto", "Warto zauważyć"), more than one dash in a paragraph, and a FOG-PL readability score per paragraph. The English config adds overused AI words, filler transitions, em dashes and reading grade. Fix warnings unless they are wrong for this reader, for example an acronym the reader uses daily. Suggestions are hints. Running this before the cold read saves the reader from reporting what a regex can find. If `vale` is not installed, say so and skip this step.
 

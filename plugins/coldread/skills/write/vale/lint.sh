@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Lint a text with the coldread Vale rules for its language.
 #   lint.sh en|pl <file>...
-# When the repository holds .coldread/vale/styles, its Project/ rules run too and
+# It looks for .coldread/vale/styles in the repository's root, then in each folder
+# above it, and uses the nearest one. A folder above keeps personal settings out of
+# the repository and covers every worktree next to it. Its Project/ rules run too and
 # the terms in config/vocabularies/Project/accept.txt count as known to the reader.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -15,9 +17,13 @@ shift
 [ "$#" -gt 0 ] || usage
 command -v vale >/dev/null 2>&1 || { echo "vale not found, so the lint step is skipped. To add it: brew install vale, or see vale.sh" >&2; exit 3; }
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-PROJECT="$ROOT/.coldread/vale/styles"
-[ -d "$PROJECT" ] || PROJECT=""
+DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PROJECT=""
+while :; do
+  [ -d "$DIR/.coldread/vale/styles" ] && { PROJECT="$DIR/.coldread/vale/styles"; break; }
+  [ "$DIR" = "/" ] && break
+  DIR="$(dirname "$DIR")"
+done
 VOCAB=""
 [ -n "$PROJECT" ] && [ -f "$PROJECT/config/vocabularies/Project/accept.txt" ] && VOCAB=1
 RULES=""
