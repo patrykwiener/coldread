@@ -738,3 +738,9 @@ The four cases these fixes touch ran again, 5 runs per arm, at about $11.
 | write-pr-template-en | 95% | 100% | 100% |
 
 The first run of `write-pr-template-en` scored 70% with the skill and 10% without, because the account's spend limit stopped 7 of its 10 runs; the table shows the rerun, with no errors.
+
+## 2026-10-14: the trigger case reads a saved file
+
+`write-trigger-pl` graded Claude's whole final message, so a note before the PR description, such as "I could not save a file", counted as its first sentences. The prompt now asks to save the description to `pr.md`, and `ask-first` reads only that file. Its wording also now says that a plain request for a review counts as the ask, because the judge passed and failed the same opening, "Proszę o review", in different runs. Calibrated on three texts, two from real runs, it matched all 18 judgements over two rounds; one of those labels changed after the first round, from fail to pass, because the grader asks what was fixed, not under which condition.
+
+With 5 runs per arm, the case passed `ask-first` in 5 of 5 runs with the skill and 0 of 5 without, and the skill fired in 5 of 5. The runs cost $1.95.
