@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Set coldread up for OpenCode 2 on this computer, or update it. Safe to run again.
-#   scripts/setup-opencode.sh              link the skills, the cold reader and the commands, add the chat rules
+#   scripts/setup-opencode.sh              pull the clone, link the skills, the cold reader and the commands, add the chat rules
 #   scripts/setup-opencode.sh --no-chat    the same, but leave AGENTS.md alone
+#   scripts/setup-opencode.sh --no-pull    the same, but set up the clone as it is
 #   scripts/setup-opencode.sh --uninstall  remove what this script added
-# The links point into this clone, so a git pull updates the skills. The chat
-# rules are a copy in AGENTS.md, so run the script again after a pull.
+# The links point into this clone, so the pull updates the skills. The chat rules
+# are a copy in AGENTS.md, which every run refreshes. Each run ends with opencode reload.
 set -euo pipefail
 
 CLONE="$(cd "$(dirname "$0")/.." && pwd)"
@@ -16,13 +17,37 @@ BACKUP="$CONFIG/coldread-backups/$(date +%Y%m%d-%H%M%S)"
 
 MODE=install
 CHAT=1
+PULL=1
 for arg in "$@"; do
   case "$arg" in
     --no-chat) CHAT=0 ;;
+    --no-pull) PULL=0 ;;
     --uninstall) MODE=uninstall ;;
-    *) echo "usage: $0 [--no-chat | --uninstall]" >&2; exit 2 ;;
+    *) echo "usage: $0 [--no-chat] [--no-pull] | --uninstall" >&2; exit 2 ;;
   esac
 done
+
+# Pull first, then carry on in the script the pull brought, so a skill added upstream gets its link.
+if [ "$MODE" = install ] && [ "$PULL" = 1 ]; then
+  if ! { [ "$0" -ef "$CLONE/scripts/setup-opencode.sh" ] && command -v git >/dev/null 2>&1 \
+      && [ "$(git -C "$CLONE" rev-parse --show-toplevel 2>/dev/null)" -ef "$CLONE" ]; }; then
+    echo "$CLONE is not a git clone of coldread, so nothing was pulled"
+  elif ! git -C "$CLONE" rev-parse --verify --quiet '@{upstream}' >/dev/null; then
+    echo "$CLONE has no upstream branch to pull from, so nothing was pulled"
+  else
+    before="$(git -C "$CLONE" rev-parse HEAD)"
+    git -C "$CLONE" pull --ff-only --quiet || {
+      echo "git pull --ff-only failed in $CLONE. To set up the version it holds, run $0 --no-pull" >&2
+      exit 1
+    }
+    if [ "$(git -C "$CLONE" rev-parse HEAD)" != "$before" ]; then
+      echo "pulled into $CLONE:"
+      git --no-pager -C "$CLONE" log --oneline --no-decorate "$before..HEAD"
+      exec "$BASH" "$CLONE/scripts/setup-opencode.sh" --no-pull "$@"
+    fi
+    echo "$CLONE is up to date"
+  fi
+fi
 
 [ -d "$CLONE/opencode/skills" ] || { echo "$CLONE/opencode is missing: run scripts/build-opencode.py first" >&2; exit 1; }
 
@@ -60,6 +85,11 @@ put_block() {
     }' "$AGENTS" > "$out"
 }
 
+reload_opencode() {
+  command -v opencode >/dev/null 2>&1 && opencode reload && return
+  echo "Run opencode reload, or restart OpenCode, to load the changes."
+}
+
 markers_ok() {
   local starts ends
   starts="$(grep -c "^$START" "$AGENTS" || true)"
@@ -84,7 +114,7 @@ if [ "$MODE" = uninstall ]; then
     echo "removed the chat rules from $AGENTS"
   fi
   [ -d "$CONFIG/coldread-backups" ] && echo "Earlier copies this script moved aside are in $CONFIG/coldread-backups/"
-  echo "Run opencode reload or restart OpenCode."
+  reload_opencode
   exit 0
 fi
 
@@ -146,4 +176,5 @@ if [ "$CHAT" = 1 ]; then
 fi
 
 command -v vale >/dev/null 2>&1 || echo "Optional: brew install vale, for the lint step of the write skill in English and Polish"
-echo "Done. Run opencode reload now and after every git pull. The commands are /coldread/write, /coldread/reply and /coldread/plain."
+reload_opencode
+echo "Done. To update later, run this script again. The commands are /coldread/write, /coldread/reply and /coldread/plain."

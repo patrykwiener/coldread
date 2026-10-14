@@ -164,9 +164,9 @@ coldread also runs in OpenCode 2. Set it up from a clone:
 git clone https://github.com/patrykwiener/coldread ~/Code/coldread && ~/Code/coldread/scripts/setup-opencode.sh
 ```
 
-The script links the skills, the cold reader and the commands from the clone into `~/.config/opencode`. It also copies the chat rules from `coldread-chat`, the ten rules for every answer, into `~/.config/opencode/AGENTS.md` between two marker lines. Run it with `--no-chat` to leave `AGENTS.md` alone, or with `--uninstall` to remove everything it added. If you installed coldread's write skill, cold reader or `/write` command by hand before, the script moves those files to `~/.config/opencode/coldread-backups/`, because both copies would load. Files of yours with other contents stay. Then run `opencode reload`.
+The script links the skills, the cold reader and the commands from the clone into `~/.config/opencode`. It also copies the chat rules from `coldread-chat`, the ten rules for every answer, into `~/.config/opencode/AGENTS.md` between two marker lines. Run it with `--no-chat` to leave `AGENTS.md` alone, with `--no-pull` to set up the clone as it is, or with `--uninstall` to remove everything it added. If you installed coldread's write skill, cold reader or `/write` command by hand before, the script moves those files to `~/.config/opencode/coldread-backups/`, because both copies would load. Files of yours with other contents stay. At the end, the script runs `opencode reload`.
 
-To update, run `git pull` in the clone, run the script again so the copy of the chat rules catches up, and run `opencode reload`. OpenCode does not notice a change behind a link until that reload.
+To update, run the script again. It runs `git pull --ff-only` in the clone. When the pull brings new commits, the script starts over from the new version, so a skill added upstream gets its link too. Then it refreshes the copy of the chat rules and reloads OpenCode. If the pull fails, for example offline or because the clone holds commits of your own, the script stops and suggests `--no-pull`. A branch without an upstream, such as one you work on, is set up without a pull.
 
 | In Claude Code | In OpenCode |
 |---|---|
