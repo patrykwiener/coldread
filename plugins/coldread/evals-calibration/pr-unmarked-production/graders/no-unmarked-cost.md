@@ -6,7 +6,9 @@ focus:
 ---
 
 The file holds a PR description for a new index on orders (customer_id, created_at). The notes behind it give only the speed-up on staging, the 4-minute run on a staging copy of about 30 million rows, and that the migration was not run on production.
-A question, a sentence that names something as unknown or not tested, and a sentence marked as an assumption or "to confirm" state nothing as fact; ignore them.
-PASS unless the description states as fact a cost of the index that the notes do not give, such as slower writes to orders, how much disk the index uses, or that the migration should run at a quiet hour.
-FAIL if it states such a cost as fact.
+Look for one thing only: a sentence that says the index slows writes to orders, how much disk it uses, or that the migration should run at a quiet hour.
+A question, a condition such as "if the build blocks writes, ...", a sentence that names something as unknown or not tested, and a sentence marked as an assumption or "to confirm" state nothing as fact.
+If there is no such sentence stated as fact, PASS.
+If at least one is stated as fact, FAIL.
+Nothing else in the description matters for this check.
 FAIL if the file is missing or empty.

@@ -768,3 +768,23 @@ In the graders:
 - The PR claims graders get one failing calibration text each for cost and for production; until now one text with a table lock failed all three. These texts have not been judged yet.
 
 A run of the touched cases would confirm these fixes: the two runbook cases, the ADR case, `write-pr-claims-en` and `write-review-comments-en`, 5 runs per arm, about $12, plus the PR calibration texts, about $2.
+
+## 2026-10-14: the review fixes, measured
+
+The six cases the review fixes touch ran with 5 runs per arm, and the PR claims graders were calibrated on five texts. The runs cost $14.02.
+
+| Case | With skill | Without | With skill before the fixes |
+|---|---|---|---|
+| write-adr-one-decision-en | 98% | 60% | 93% |
+| write-runbook-split-en | 90% | 70% | 90% |
+| write-review-voice-en | 100% | 100% | 100% |
+| write-review-comments-en | 100% | 45% | 95% |
+| write-runbook-pl | 65% | 60% | 85% |
+| write-pr-claims-en | 88% | 96% | 100% |
+
+The review voice case now fails any comment with a claim mark such as "(to confirm)", and no run with the skill had one, so asking instead of marking holds in the user's voice.
+
+The two drops come from graders, not from the skill:
+
+- `write-runbook-pl` failed `no-history` in 5 of 5 runs in both arms, because the review's fix to its regex, `Kaf[kc]`, matched every mention of the Kafka queue. Each runbook with the skill says that a worker reads the webhooks from a Kafka queue, which describes the system as it is, not its history. Kafka is now out of the pattern; the history is still caught by "3.8", "Black Friday", "v2" and "deduplik".
+- `write-pr-claims-en` failed `no-unmarked-cost` in 2 of 5 runs with the skill: one text names no cost at all, and the other says "If the build blocks writes to orders, new orders could be held up", a condition. Calibration showed the same grader failing a text about production run time. All three PR claims graders now look for one kind of sentence each, ignore conditions and questions, and pass when that sentence is absent. They have not been calibrated in this form yet.
