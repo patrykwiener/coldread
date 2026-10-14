@@ -788,3 +788,16 @@ The two drops come from graders, not from the skill:
 
 - `write-runbook-pl` failed `no-history` in 5 of 5 runs in both arms, because the review's fix to its regex, `Kaf[kc]`, matched every mention of the Kafka queue. Each runbook with the skill says that a worker reads the webhooks from a Kafka queue, which describes the system as it is, not its history. Kafka is now out of the pattern; the history is still caught by "3.8", "Black Friday", "v2" and "deduplik".
 - `write-pr-claims-en` failed `no-unmarked-cost` in 2 of 5 runs with the skill: one text names no cost at all, and the other says "If the build blocks writes to orders, new orders could be held up", a condition. Calibration showed the same grader failing a text about production run time. All three PR claims graders now look for one kind of sentence each, ignore conditions and questions, and pass when that sentence is absent. They have not been calibrated in this form yet.
+
+## 2026-10-14: the narrowed graders, calibrated and measured
+
+The three PR claims graders, each now looking for one kind of sentence, were calibrated twice on five labelled texts, and the two cases whose graders changed ran again, 5 runs per arm. The runs cost about $8.
+
+Each grader failed its own kind of unmarked claim in 6 of 6 judgements, and none failed the clean text or the text with a marked claim. They are not exclusive: `no-unmarked-production` also failed the text that only states a write cost, in 6 of 6, `no-unmarked-cost` failed the production text in 3 of 6, and the text with a 4-minute table lock failed all three. So a text with one unmarked claim can fail more than one grader, but a text without one fails none.
+
+| Case | With skill | Without |
+|---|---|---|
+| write-pr-claims-en | 100% | 88% |
+| write-runbook-pl | 100% | 65% |
+
+Without the skill, 3 of 5 PR descriptions state a production estimate as fact, and 3 of 5 Polish runbooks keep the history.

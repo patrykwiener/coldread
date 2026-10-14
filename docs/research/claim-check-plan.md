@@ -19,4 +19,4 @@ The full run on 2026-10-13 failed `no-invented-claims` in 5 of 5 runs of two cas
 | 3. Sort the added claims | done: general tool facts, inferred consequences and recommendations; all listed in the report, none marked in the text |
 | Decide the rule | done: mark claims about the user's system in the text; general tool facts only in the report |
 | 4. Change the rule | done: rewrite and ADR additions now marked or gone; graders split into narrow, calibrated checks; one load grader stays uncalibrated |
-| 5. Full run | done: 92% against 66% per case over 19 cases; review fixes of 2026-10-14 not measured yet |
+| 5. Full run | done: 92% against 66% per case over 19 cases; review fixes of 2026-10-14 measured in the touched cases |
