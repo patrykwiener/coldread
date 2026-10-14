@@ -723,3 +723,18 @@ The other 12 cases moved by at most one run of 5. The two cases that dropped are
 
 - `write-trigger-pl` grades Claude's whole final message. In 2 of 5 runs Claude opened the message with a note that it could not save a file, and the judge read that note as the first sentences of the PR description, which itself opens with the fix and the ask. The grader should read a saved file, as the rewrite case now does.
 - `write-runbook-pl` failed `design-moved` in 2 of 5 runs in which Claude named an ADR for the history in its report but kept one sentence in the runbook, that a worker reads the webhooks from a Kafka queue, because the runbook uses the word partition. Whether that sentence is history or what the on-call engineer needs is a judgment call.
+
+## 2026-10-13: three fixes from a review of the branch
+
+A review of the whole branch found three things in `SKILL.md`: a sentence about Details that read two ways, an example of a mark, "Job traffic adds load to the database (to confirm)", that contradicts the rule that what follows from the notes by necessity is sourced, and that rule itself, which only the graders stated. The sentence is now two, the example is "Job traffic slows the application's queries (to confirm)", and the rule is in the claim check.
+
+The four cases these fixes touch ran again, 5 runs per arm, at about $11.
+
+| Case | With skill | Without | With skill, full run |
+|---|---|---|---|
+| write-adr-one-decision-en | 93% | 56% | 91% |
+| write-runbook-split-en | 90% | 45% | 90% |
+| write-runbook-pl | 85% | 50% | 75% |
+| write-pr-template-en | 95% | 100% | 100% |
+
+The first run of `write-pr-template-en` scored 70% with the skill and 10% without, because the account's spend limit stopped 7 of its 10 runs; the table shows the rerun, with no errors.
