@@ -1,9 +1,11 @@
 ---
-type: regex
-target:
+type: llm
+focus:
   source: file
   path: runbook.md
-pattern: '^#{1,6} .*(?:[Ss]everity|[Ii]mpact|[Aa]lert)[\s\S]*^#{1,6} .*(?:[Cc]heck|[Dd]iagnos|[Tt]riage)[\s\S]*^#{1,6} .*(?:[Mm]itigat|[Ff]ix|[Rr]esolv)'
-flags: m
-match: contains
 ---
+
+The file holds the runbook Claude wrote.
+PASS if its sections come in this order: what the alert means and its impact, then what to check first, then what to do for each cause, then when and where to escalate.
+FAIL if a section is missing or the order differs.
+FAIL if the file is missing or empty.

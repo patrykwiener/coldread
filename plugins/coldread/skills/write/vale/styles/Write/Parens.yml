@@ -5,6 +5,7 @@ nonword: true
 # Two parentheses are not flagged, because SKILL.md asks for them: a bare
 # acronym after its spelled-out term, as in 'Model Context Protocol (MCP)',
 # and a bare ticket or issue number after its plain name, as in
-# 'the duplicate-invoice bug (#412)'.
+# 'the duplicate-invoice bug (#412)'. A third is a mark on an unverified
+# claim, '(to confirm)' or '(do potwierdzenia)', which step 3 asks for.
 tokens:
-  - '\((?!(?:[A-Z]{3,5}|#\d{1,6}|[A-Z]{2,5}-\d{1,6})\))[^)]+\)'
+  - '\((?!(?:[A-Z]{3,5}|#\d{1,6}|[A-Z]{2,5}-\d{1,6}|to confirm|do potwierdzenia)\))[^)]+\)'

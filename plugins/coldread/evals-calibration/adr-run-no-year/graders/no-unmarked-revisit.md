@@ -11,3 +11,4 @@ If there is no such sentence, PASS.
 If every such sentence is marked as an assumption or "to confirm", PASS.
 If at least one such sentence is not marked, FAIL.
 Nothing else in the ADR matters for this check.
+FAIL if the file is missing or empty.

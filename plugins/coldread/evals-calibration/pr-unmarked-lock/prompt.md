@@ -1,5 +1,5 @@
 ---
-description: Judge calibration for the PR invented-claims grader; a hand-labelled PR description, expected FAIL, a table lock stated as fact.
+description: Judge calibration for the PR invented-claims grader; a hand-labelled PR description, expected FAIL on no-unmarked-lock; the lock over 4 minutes also bears on production and cost, so all three may fail.
 tags: [calibration]
 max_turns: 4
 timeout_seconds: 180

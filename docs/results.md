@@ -685,7 +685,7 @@ This corrects the earlier entries: the 5 of 5 failures there came partly from th
 
 The claim check now asks for a mark in the text, such as "(to confirm)", on every claim about the user's system that has no source: an inferred consequence, an added recommendation, a definition applied to the system, or a completed detail such as a year. General facts about a named tool need no mark but go in the report. The maintainer chose this rule over marking everything or marking nothing.
 
-Broad graders that judged "any new information" failed texts that a direct question to the same model passed, word for word, with no single sentence to blame: they flagged a text for mentioning a topic from their own list of examples, even as a question. So each case now has narrow graders, each asking about one kind of addition, calibrated twice on hand-labelled texts in `plugins/coldread/evals-calibration/`. One real rewrite stayed unstable and was dropped from the calibration set as truly borderline.
+Broad graders that judged "any new information" failed texts that a direct question to the same model passed, word for word, with no single sentence to blame: they flagged a text for mentioning a topic from their own list of examples, even as a question. So each case now has narrow graders, each asking about one kind of addition, calibrated twice on hand-labelled texts in `plugins/coldread/evals-calibration/`. The real rewrite and seven trimmed variants of it stayed unstable on `no-invented-design` and were dropped, so that grader is calibrated only on hand-written texts, and its only failing example is a text that invents a cause.
 
 | Case | Check | With skill | Without |
 |---|---|---|---|
@@ -695,6 +695,8 @@ Broad graders that judged "any new information" failed texts that a direct quest
 | write-adr-one-decision-en | no year added to "3 September" | 5 of 5 | 0 of 5 |
 | write-adr-one-decision-en | recommendation to revisit marked or absent | 4 of 5 | 0 of 5 |
 | write-pr-claims-en, held-out | no unmarked claim on locks, production or cost | 14 of 15 | 15 of 15 |
+
+In the full run that followed, the rewrite's cause and design graders passed 4 of 5 without the skill, so these without-skill counts vary by up to 4 runs of 5.
 
 The year rule was added after a run in which every ADR with the skill dated the decision "3 September 2026". The runs in this entry cost about $16, and the calibration rounds about $20.
 
@@ -706,7 +708,7 @@ What this does not show:
 
 ## 2026-10-13: the full suite after the claim rule, 5 runs per arm
 
-The whole suite ran again after the claim rule: 19 cases, 5 runs per arm. The skill passed 92% of the checks against 66% without it, against 93% and 65% in the full run before the rule. The run took 40 minutes and cost $42.72; setup as in that run.
+The whole suite ran again after the claim rule: 19 cases, 5 runs per arm. The skill averaged 92% per case against 66% without it, against 93% and 65% in the full run before the rule; counted over all checks, 373 of 400 passed with the skill and 268 of 400 without. The run took 40 minutes and cost $42.72; setup as in that run.
 
 | Case | With skill | Without | With skill, run before |
 |---|---|---|---|
@@ -744,3 +746,25 @@ The first run of `write-pr-template-en` scored 70% with the skill and 10% withou
 `write-trigger-pl` graded Claude's whole final message, so a note before the PR description, such as "I could not save a file", counted as its first sentences. The prompt now asks to save the description to `pr.md`, and `ask-first` reads only that file. Its wording also now says that a plain request for a review counts as the ask, because the judge passed and failed the same opening, "Proszę o review", in different runs. Calibrated on three texts, two from real runs, it matched all 18 judgements over two rounds; one of those labels changed after the first round, from fail to pass, because the grader asks what was fixed, not under which condition.
 
 With 5 runs per arm, the case passed `ask-first` in 5 of 5 runs with the skill and 0 of 5 without, and the skill fired in 5 of 5. The runs cost $1.95.
+
+## 2026-10-14: fixes from an independent review, not measured yet
+
+Two reviewers with no context from the session read the branch: one the skill as a prompt, one the eval method and the numbers. The numbers in the tables and the README matched the raw results. The fixes below change the skill and the graders, and no eval has run since, so the tables above describe the branch before them.
+
+In the skill:
+
+- Vale's parenthesis rule flagged "(to confirm)", and the skill asked to fix Vale's warnings, so a model could delete the mark it was told to add. The rule now skips "(to confirm)" and "(do potwierdzenia)", checked with `lint.sh` in both languages, and the skill says never to remove a mark to satisfy a warning.
+- In a review comment, a reply or a chat message, an unverified claim is now asked as a question instead of marked, so marks do not land in short texts written in the user's voice.
+- A recommendation already labelled as one, which `channels/long-docs.md` asks for, needs no mark; the Polish mark is fixed as "(do potwierdzenia)"; the example of a necessary deduction no longer relies on one transaction implying one database, which a two-phase commit breaks.
+- A runbook has no Details and an ADR may end with them; the report lists the other documents the skill proposes; an ADR's Status may be deprecated, as in Nygard's post; and with a single named file the ADR holds the decision the user asked about.
+
+In the graders:
+
+- `no-unmarked-load` is removed from the ADR case: it could not be calibrated, and the format allows no weight of 0. Its calibration texts stay in `evals-calibration/`.
+- `no-added-year` fails only an unmarked year after a day and a month, so "2000 jobs" and a marked year pass.
+- `design-moved` in both runbook cases and `ops-moved` read only Claude's reply, so they now ask only whether the reply says where the material belongs; regex graders check the files. `write-runbook-pl`'s history regex now matches the Polish "Kafce".
+- `write-runbook-split-en/order` was a regex on heading words and failed sentence headings; it is now an LLM grader like the Polish one.
+- Every grader that reads a file now fails a missing or empty file.
+- The PR claims graders get one failing calibration text each for cost and for production; until now one text with a table lock failed all three. These texts have not been judged yet.
+
+A run of the touched cases would confirm these fixes: the two runbook cases, the ADR case, `write-pr-claims-en` and `write-review-comments-en`, 5 runs per arm, about $12, plus the PR calibration texts, about $2.

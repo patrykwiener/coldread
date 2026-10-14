@@ -10,3 +10,4 @@ Ignore every sentence that is marked in the text as an assumption, not verified,
 The source names the migration and the 2 June cutover separately and does not say they are the same event or when the migration happened.
 PASS unless the rewrite says that the migration happened on 2 June, that the migration was the cutover, or that the cutover was a switch to a new system or setup.
 FAIL if it says any of these.
+FAIL if the file is missing or empty.

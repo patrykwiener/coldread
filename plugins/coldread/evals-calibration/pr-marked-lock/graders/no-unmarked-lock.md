@@ -9,3 +9,4 @@ The file holds a PR description for a new index on orders (customer_id, created_
 A question, a sentence that names something as unknown or not tested, and a sentence marked as an assumption or "to confirm" state nothing as fact; ignore them.
 PASS unless the description states as fact that building the index locks the orders table or blocks writes to it, or that it does not.
 FAIL if it states either as fact.
+FAIL if the file is missing or empty.
