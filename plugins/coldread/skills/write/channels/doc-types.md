@@ -1,6 +1,6 @@
 # Kinds of documents with fixed sections
 
-Read this when the text is one of the kinds of documents below and the repository has no template for it. Each kind has sections its readers expect, so they count as a template. Some kinds fix the names of their sections: keep those headings as they are, and let the first sentence under each carry what a heading of your own would have said, as in "Jobs live in Postgres because they must commit in the same transaction as their data" under `## Decision`. Other kinds fix only the order: keep the order, and write headings that say something. Each kind also says what does not belong in it and where that material goes instead. Such material goes to the report, as step 7 of the skill says.
+Read this when the text is one of the kinds of documents below and the repository has no template for it. Each kind has sections its readers expect, so they count as a template. Some kinds fix the names of their sections: keep those headings as they are, and let the first sentence under each carry the claim, as "Make headings say something" in the skill says. Other kinds fix only the order: keep the order, and write headings that say something. Each kind also says what does not belong in it and where that material goes instead. Such material goes to the report, as step 7 of the skill says.
 
 ## ADR, an architecture decision record
 
