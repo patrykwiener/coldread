@@ -2,29 +2,34 @@
 
 coldread makes Claude Code and OpenCode write for a reader who was not in the session. Its writing skill drafts PR descriptions, review comments, design docs, explainers, handoff notes, prompts for a new agent session and Slack messages. Then a subagent that has seen neither the session nor your CLAUDE.md reads each draft and reports what it could not follow. Optional chat rules make everyday answers easier to follow.
 
-## Claude writes from inside the session
+To get started, read [What you get](#what-you-get), [Install](#install) and [How configuration works](#how-configuration-works), then follow the [three setup steps](#set-it-up-in-three-steps). If you already installed coldread, start at How configuration works. [Keep your settings to yourself](#keep-your-settings-to-yourself) covers settings that stay out of the team's repository or reach every worktree on your computer. OpenCode, an install from a clone, the Vale rules and the evals have pages of their own in [docs/](#more-in-docs).
 
-Claude knows what its own working labels mean, and the reader does not. In the evals, Claude wrote a Slack message to a product manager from notes that mentioned `Phase A`, `option B` and `D3` without explaining them. Without coldread, at least one of these labels reached the manager in 9 of 9 attempts. With coldread, none did in 9 of 9. The writing skill cut them because the manager did not need them to decide, and it listed the cuts in its report.
+- [What you get](#what-you-get)
+- [Install](#install)
+- [How configuration works](#how-configuration-works)
+- [Set it up in three steps](#set-it-up-in-three-steps)
+- [Keep your settings to yourself](#keep-your-settings-to-yourself)
+- [Use](#use)
+- [What the evals show](#what-the-evals-show)
+- [Claude.ai and ChatGPT](#claudeai-and-chatgpt)
+- [More in docs/](#more-in-docs)
+- [Related work](#related-work)
 
 ## What you get
 
 | Part | When it works | What it does |
 |---|---|---|
-| `/coldread:write` | starts on its own when you ask for a PR description, a review, a doc, a message or a prompt for a new session | Sets a brief, drafts, checks that every claim has a source and marks the ones it could not trace, lints the text with Vale, a linter for prose, then hands it to the cold reader. An ADR, a runbook or a design doc gets the sections its readers expect, and material meant for another document is named in the report instead of filling the text. |
+| `/coldread:write` | starts on its own when you ask for a PR description, a review, a doc, a message or a prompt for a new session | Shows a brief, its plan for the text, then drafts the text, marks each claim it could not trace to a source, lints it with Vale and hands it to the cold reader. |
 | `coldread:cold-reader` | inside `/coldread:write` | A subagent with no session and no CLAUDE.md that reads the text once and reports what it could not follow. |
 | `/coldread:reply` | when someone sent you a message you must answer | Says what the sender asks, resolves the names you may not know, then drafts your reply. |
 | `/coldread:plain` | when an answer did not land | Names what failed, such as an unknown term, then explains again in new words. |
-| Chat rules, in the optional `coldread-chat` plugin | every chat answer | Ten rules, such as: answer first, at most four points, explain every new term, ask questions that make sense on their own. |
+| Chat rules, in the optional `coldread-chat` plugin | every chat answer | Ten rules, such as answering first, giving at most four points, explaining every new term and asking questions that make sense on their own. |
 
-## What the evals show
-
-Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 19 writing cases, 5 runs each, `/coldread:write` averaged 92% per case against 66% without it, measured before the fixes of 2026-10-14 listed in the results. Seven cases test document structure, such as a runbook that leaves design history out, and three of them were written before any run, to check the rules on text they were not tuned on. Bash was blocked on that computer, so the run measured the skill without Vale, the word count and the facts check. An earlier run with Vale on another computer passed 90% against 53% on 8 cases. Each text cost about three times as much as without the skill.
-
-One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person.
+The lint step uses Vale, a linter for prose. An ADR, a runbook or a design doc gets the sections its readers expect, and `/coldread:write` names material meant for another document in its report instead of putting it in the text.
 
 ## Install
 
-The commands below are for Claude Code. In OpenCode, run the setup script from the [OpenCode](#opencode) section instead, and install Vale the same way. The three setup steps after this section apply to both tools.
+The commands below are for Claude Code. In OpenCode, follow [docs/opencode.md](docs/opencode.md) instead. The configuration after this section applies to both tools.
 
 ```bash
 claude plugin marketplace add patrykwiener/coldread
@@ -32,9 +37,26 @@ claude plugin install coldread@coldread        # /coldread:write, /coldread:repl
 claude plugin install coldread-chat@coldread   # optional: the chat rules in every session
 brew install vale                              # optional: the lint step; other systems: vale.sh
 # later, to update: claude plugin update coldread@coldread
+#   and, if installed: claude plugin update coldread-chat@coldread
 ```
 
-Without Vale, `/coldread:write` skips its lint step and says so. Then set coldread up for yourself and your projects in the three steps below.
+coldread needs Claude Code 2.1.271 or later, because older versions cannot load a plugin whose option offers a fixed list of values. Without Vale, `/coldread:write` skips its lint step and says so. To edit coldread, or to keep several computers on the same version, install from a clone instead, as [docs/clone.md](docs/clone.md) describes.
+
+## How configuration works
+
+coldread works without any settings, and each one you add tells it more about you or your readers. It has five settings. Three belong to you and apply in every project, one belongs to a project, and the `.coldread/` folder can belong to either. The table shows what each setting does, where it lives, whom it applies to, and what happens without it.
+
+| What it sets | Where it lives | Applies to | Without it |
+|---|---|---|---|
+| The language `/coldread:write` writes in, set to `auto`, `en` or `pl` | the plugin option, set with `/plugin configure coldread@coldread` | you, in every project | `auto`, the language of your request |
+| What you know, so chat answers from `coldread-chat` and `/coldread:reply` explain only the terms that are new to you | an About me section in `~/.claude/CLAUDE.md`, [step 1](#1-tell-claude-what-you-know-and-how-you-write) | you, in every project | Claude guesses what you know |
+| How the texts that go out under your name sound, such as review comments | a How I write section in `~/.claude/CLAUDE.md`, [step 1](#1-tell-claude-what-you-know-and-how-you-write) | you, in every project | the skill's default shape for each kind of text, such as a label in front of each review comment |
+| Who reads the project's texts, the names they know, the document language, the team's review style | a Writing section in the project's `CLAUDE.md`, [step 2](#2-tell-coldreadwrite-who-reads-your-projects-texts) | everyone in the project, or only you, as [Keep your settings to yourself](#keep-your-settings-to-yourself) shows | the skill picks the most likely reader and says so in its brief |
+| The terms the project's readers know, its own lint rules, and its own sample texts | a `.coldread/` folder in the repository's root or a folder above it, [step 3](#3-optional-share-your-projects-terms-and-texts) | everyone in the project if you commit it, otherwise only you on this computer | coldread's own lint rules and its invented sample texts |
+
+When two places disagree, the narrower one wins where it applies. A project's own rule for a kind of text beats your How I write note inside that project, and your note beats the skill's default shape. For example, your note may say that review comments carry no labels, while the project's Writing section says each comment opens with "blocking" or "non-blocking". Comments in that project then get the label, and comments in your other projects do not. No note lifts the skill's rules for the reader. The text still uses names the reader has, gives a source for every claim, and states the ask. The document language follows the same order, so a language that the project's `CLAUDE.md` names beats the plugin option.
+
+Claude Code keeps plugin options in user settings only, so a project's exceptions go into its `CLAUDE.md`. Chat needs no language setting, because the rules tell Claude to reply in your language. A request can also name its own reader for one text, as in the examples under [Use](#use). In OpenCode, `AGENTS.md` files take the place of `CLAUDE.md`, as [docs/opencode.md](docs/opencode.md#commands-and-settings-in-opencode) shows.
 
 ## Set it up in three steps
 
@@ -42,7 +64,7 @@ The first two steps take a few minutes each. The third is for teams that want th
 
 ### 1. Tell Claude what you know, and how you write
 
-This step gives coldread two notes about you. The About me note is for the chat rules from `coldread-chat`, which shape every answer: answer first, at most four points, every new term explained. They use the note to decide which terms are new to you, and without it Claude guesses. Add the note to `~/.claude/CLAUDE.md`, the file Claude Code loads in every session. In two to four sentences, say what Claude can leave unexplained, where you are a layman, and how you read most easily.
+This step gives coldread two notes about you. The About me note is for the chat rules from `coldread-chat`, which shape every answer: answer first, at most four points, every new term explained. They use the note to decide which terms are new to you, and without it Claude guesses. `/coldread:reply` reads it too, to tell which names in a message you may not know. Add the note to `~/.claude/CLAUDE.md`, the file Claude Code loads in every session. If you set `CLAUDE_CONFIG_DIR`, use the `CLAUDE.md` in that folder instead. In two to four sentences, say what Claude can leave unexplained, where you are a layman, and how you read most easily.
 
 ```markdown
 ## About me
@@ -52,7 +74,7 @@ Backend engineer: Python, PostgreSQL and AWS need no explanation. A layman in fr
 
 [`rules/CLAUDE.example.md`](rules/CLAUDE.example.md) has two more notes, for a product manager and for a data scientist. To check yours, ask Claude about a topic from your layman list and see whether the answer explains its trade terms.
 
-If texts go out under your name, such as review comments or Slack messages, add a How I write note to the same file. It works without the chat rules: `/coldread:write` and `/coldread:reply` follow it for those texts, and it wins over the skill's own shape for a channel, such as the labels it puts on review comments. Measure rather than guess: ask Claude to read 20 to 40 of your own comments or messages and count their words, how they open and end, and the markup you never use.
+If texts go out under your name, such as review comments or Slack messages, add a How I write note to the same file. It works without the chat rules, because `/coldread:write` and `/coldread:reply` follow it for those texts. It wins over the skill's default shape for that kind of text, such as the labels it puts on review comments. Measure the note rather than guess it. Ask Claude to read 20 to 40 of your own comments or messages and count their words, how they open and end, and the markup you never use.
 
 ```markdown
 ## How I write
@@ -60,11 +82,9 @@ If texts go out under your name, such as review comments or Slack messages, add 
 Review comments: one or two plain sentences, about 30 words, never over 70. No headings, lists, bold or labels such as nit: or Fix:. Open on the concrete thing in backticks and what it does, and end on a question, such as "wdyt?". Slack messages: friendly and short, with the ask in the first sentence.
 ```
 
-In OpenCode, both notes go into `~/.config/opencode/AGENTS.md`, which OpenCode loads in every session.
-
 ### 2. Tell `/coldread:write` who reads your project's texts
 
-In each project where you write for other people, add a Writing section to the `CLAUDE.md` in the project's root. Say which language documents use, who reads each kind of text, and which names those readers already know. The skill takes the reader for the brief it shows before drafting from this section, so the cold reader does not ask about names your team uses daily. A team can set its review style here too. In that project, the team's style wins over the skill's default shape and over a personal How I write note.
+In each project where you write for other people, add a Writing section to the `CLAUDE.md` in the project's root. Say which language documents use, who reads each kind of text, and which names those readers already know. The skill reads this section to name the reader in the brief it shows before drafting, so the cold reader does not ask about names your team uses daily. A team can set its review style here too. In that project, the team's style wins over the skill's default shape and over a personal How I write note.
 
 ```markdown
 ## Writing
@@ -72,9 +92,9 @@ In each project where you write for other people, add a Writing section to the `
 Documents in English. PR descriptions: a backend developer on the team who knows the codebase, Jira and our deploy pipeline. Slack messages and release notes: the product manager, who knows the product but not the code. Readers know these names: Ledger, Payout API, the nightly sync.
 ```
 
-[`rules/CLAUDE.project.example.md`](rules/CLAUDE.project.example.md) has versions for a Polish team and for an open-source library. To check the section, ask for a PR description: the brief that `/coldread:write` shows first should describe your reviewer.
+[`rules/CLAUDE.project.example.md`](rules/CLAUDE.project.example.md) has versions for a Polish team and for an open-source library. To check the section, ask for a PR description. The brief that `/coldread:write` shows first should then describe your reviewer.
 
-Some projects keep `CLAUDE.md` out of git and share `AGENTS.md` instead. Then put the section in `AGENTS.md` and import that file from `CLAUDE.md` with the line `@AGENTS.md`. In OpenCode, the section goes into the project's `AGENTS.md`, which OpenCode reads directly.
+Some projects keep `CLAUDE.md` out of git and share `AGENTS.md` instead. Then put the section in `AGENTS.md`. Claude Code 2.1.277 and later read `AGENTS.md` on their own, but only when no `CLAUDE.md` or `CLAUDE.local.md` sits in the working folder or a folder above it. If a `CLAUDE.md` or `CLAUDE.local.md` sits next to the shared `AGENTS.md`, start that file with the line `@AGENTS.md`, which imports the shared file. For such a file in a folder above the project, see [The same settings in every worktree](#the-same-settings-in-every-worktree).
 
 ### 3. Optional: share your project's terms and texts
 
@@ -92,9 +112,58 @@ This repository has an example folder with four sample terms, one rule for a pro
 curl -fsSL https://github.com/patrykwiener/coldread/archive/refs/heads/main.tar.gz | tar -xz --strip-components=2 coldread-main/examples/.coldread
 ```
 
-To keep the folder out of a shared repository, put it in a folder above the repository instead, for example next to its worktrees. `/coldread:write` uses the nearest `.coldread/`, starting at the repository's root.
+Then replace the samples with your own. Put your terms in `accept.txt`, your product names in `vale/styles/Project/ProductNames.yml`, and your team's texts in `examples-en.md`. Do not list in `accept.txt` a name whose spelling one of your rules enforces. Vale then accepts the name in any letter case, so the rule no longer catches a variant such as `Payout Api`. Commit the folder to share it with the team, or keep it to yourself as the next section shows. To check it, ask for a text that uses one of your terms. The Vale warnings that `/coldread:write` lists at the end should not name it.
 
-Then replace the samples with your own: your terms in `accept.txt`, your product names in `vale/styles/Project/ProductNames.yml`, and your team's texts in `examples-en.md`. Do not list in `accept.txt` a name that one of your rules spells out: Vale accepts every spelling of a listed term, so the rule would never fire. Commit the folder to share it with the team. To check it, ask for a text that uses one of your terms: the Vale warnings that `/coldread:write` lists at the end should not name it.
+## Keep your settings to yourself
+
+Your About me and How I write notes stay with you, because they live in your own `~/.claude/CLAUDE.md`. A project's Writing section and its `.coldread/` folder reach the whole team once you commit them. Keep them out of git when the team does not use coldread, or when they hold notes only you need.
+
+### A Writing section only you use
+
+Put the section in a `CLAUDE.local.md` file in the project's root. Claude Code loads that file next to the project's `CLAUDE.md`, and it is meant for notes that stay out of git. If the project shares an `AGENTS.md` and has no `CLAUDE.md`, start the file with the line `@AGENTS.md`. Claude Code stops reading `AGENTS.md` on its own once a `CLAUDE.local.md` exists, so the import keeps the team's file loaded.
+
+```markdown
+@AGENTS.md
+
+## Writing
+
+Documents in UK English. PR descriptions: a developer on the team who knows the codebase and did not work on the change. Readers know these names: Ledger, Payout API.
+```
+
+Then keep the file out of git without changing the team's `.gitignore`. Git also reads the file `info/exclude` in the clone's `.git` folder, and that file is never committed. The command below adds a line to it. It works inside a worktree too, because `--git-common-dir` points at the main `.git` folder:
+
+```bash
+echo 'CLAUDE.local.md' >> "$(git rev-parse --git-common-dir)/info/exclude"
+```
+
+### A `.coldread/` folder only you use
+
+Add the folder to the same file:
+
+```bash
+echo '.coldread/' >> "$(git rev-parse --git-common-dir)/info/exclude"
+```
+
+### The same settings in every worktree
+
+`git worktree add` checks out only what is committed, so a private file in the main checkout is missing from every worktree. Put such files in the folder that holds the checkout and its worktrees instead. That folder must hold only this project's checkouts, because both files below also reach every other repository inside it. For `~/Code/acme/acme-api` and its worktree `~/Code/acme/acme-api-pr12`, that folder is `~/Code/acme/`:
+
+- `~/Code/acme/.coldread/` covers every worktree, because coldread looks for `.coldread/` in the repository's root first, then in each folder above it, and uses the nearest one.
+- `~/Code/acme/CLAUDE.local.md` covers every worktree too, because Claude Code loads `CLAUDE.md` and `CLAUDE.local.md` from the working folder and from every folder above it. Leave `@AGENTS.md` out of this file. An import path counts from the file that holds it, so here it would look for `~/Code/acme/AGENTS.md`.
+
+`~/Code/acme/CLAUDE.local.md` also stops Claude Code from reading each worktree's `AGENTS.md` on its own. If the project shares an `AGENTS.md` and no `CLAUDE.md` of the project imports it, tell Claude Code to read `AGENTS.md` files together with `CLAUDE.md` files. The setting belongs to `cc-plugin-agents-md@builtin`, the built-in plugin that reads `AGENTS.md`. Add this to `~/.claude/settings.json`, or to `settings.json` in your `CLAUDE_CONFIG_DIR` folder if you set one, because Claude Code ignores the setting in a project's settings. It needs Claude Code 2.1.285 or later:
+
+```json
+{
+  "pluginConfigs": {
+    "cc-plugin-agents-md@builtin": {
+      "options": { "instructionFiles": "claude-md-and-agents-md" }
+    }
+  }
+}
+```
+
+The setting applies in every project. Claude Code skips an `AGENTS.md` that it has already loaded through an import, so no file loads twice.
 
 ## Use
 
@@ -105,9 +174,9 @@ Then replace the samples with your own: your terms in `accept.txt`, your product
 /coldread:write rewrite docs/design.md for a backend developer who did not work on this
 ```
 
-It first shows a brief: the reader, the one thing they must do, the points, where the text will be read and a word budget. The points set the length, about 80 words each, so correct a wrong or extra point when you see it. Where the text will be read sets the room: a review comment gets at most three sentences, and a Slack message or a commit body gets no Details section. When the reader must understand how something works, the skill defines each term with an example and walks one case from start to end.
+It first shows a brief, which names the reader, the one thing they must do, the points, where the text will be read and a word budget. The points set the length, about 80 words each, so correct a wrong or extra point when you see it. Where the text will be read sets the room, so a review comment gets at most three sentences, and a Slack message or a commit body gets no Details section. When the reader must understand how something works, the skill defines each term with an example and walks one case from start to end.
 
-The skill then drafts, fixes what the cold reader could not follow, and reports the cold reader's findings, the Vale warnings and the word count. It also quotes, side by side, what the brief says the reader must do and what the cold reader understood, and checks the cold reader's retelling against the points. When it rewrites or shortens a text, it lists every fact it removed, corrected or added, and every claim it could not trace to your notes, a check or the code. When it rewrites a file, a script lists every number and code span that left it. The skill never posts, sends or commits a text: you do.
+The skill then drafts, fixes what the cold reader could not follow, and reports the cold reader's findings, the Vale warnings and the word count. It also quotes, side by side, what the brief says the reader must do and what the cold reader understood, and checks the cold reader's retelling against the points. When it rewrites or shortens a text, it lists every fact it removed, corrected or added, and every claim it could not trace to your notes, a check or the code. When it rewrites a file, a script lists every number and code span that left it. The skill never posts, sends or commits a text. You do that yourself.
 
 Ask for a prompt for a new session, and the skill writes it for an agent that has your repository but not this session. The prompt holds your words verbatim, the decisions already made, the files to read, steps with stops for your approval, and the traps earlier sessions hit. A long document or a set of documents gets a reading path for each kind of reader. A document that asks its readers to choose gets options, a labelled recommendation with its reason, and the evidence that would change it.
 
@@ -115,82 +184,25 @@ When someone sent you a message you do not fully get, paste it after `/coldread:
 
 When an answer did not land, type `/coldread:plain`, or say what you missed: `/coldread:plain what is a lease?`
 
-## Settings
+## What the evals show
 
-| Setting | Where | Default |
-|---|---|---|
-| Document language: `auto`, `en` or `pl` | `/plugin configure coldread@coldread` | `auto` writes in the language of your request |
-| What you know well | the About me section in `~/.claude/CLAUDE.md`, step 1 of the setup | none, so Claude guesses |
-| How you write texts that go out under your name | the How I write section in `~/.claude/CLAUDE.md`, step 1 of the setup | none, so the skill's own shapes apply |
-| A project's document language and readers | a Writing section in that project's `CLAUDE.md`, step 2 of the setup | none |
-| A project's own lint rules, the terms its readers know and its own style anchors | a `.coldread/` folder in that repository, step 3 of the setup | none |
+Claude knows what its own working labels mean, and the reader does not. In the evals, Claude wrote a Slack message to a product manager from notes that mentioned `Phase A`, `option B` and `D3` without explaining them. Without coldread, at least one of these labels reached the manager in 9 of 9 attempts. With coldread, none did in 9 of 9. The writing skill cut them because the manager did not need them to decide, and it listed the cuts in its report.
 
-Claude Code keeps plugin options in user settings only, so a project's exceptions go into its `CLAUDE.md`. Chat needs no language setting, because the rules tell Claude to reply in your language. A request can also name its own reader, as in the examples under Use.
+Both plugins ship with evals for `claude plugin eval`, which runs each case with and without the plugin in a clean session. Over four suite runs of 13 chat cases, answers passed 83% to 88% of the checks with the rules and 65% to 70% without them. In the latest suite run of 19 writing cases, 5 runs each, `/coldread:write` averaged 92% per case against 66% without it, measured before the fixes of 2026-10-14 listed in the results. Seven cases test document structure, such as a runbook that leaves design history out, and three of them were written before any run, to check the rules on text they were not tuned on. Bash was blocked on that computer, so the run measured the skill without Vale, the word count and the facts check. An earlier run with Vale on another computer passed 90% against 53% on 8 cases. Each text cost about three times as much as without the skill.
 
-## Run coldread from a clone, on one computer or several
-
-Install from a clone when you want to edit the skill, its Vale checks or the chat rules, or to keep several computers on the same version. This replaces the install commands above. If you already installed from GitHub, run `claude plugin marketplace remove coldread` first.
-
-```bash
-git clone https://github.com/patrykwiener/coldread ~/Code/coldread && ~/Code/coldread/scripts/setup.sh
-```
-
-The script registers the clone as a local marketplace and installs the plugin from it. It sets up the chat rules with one import line in `~/.claude/CLAUDE.md` and backs that file up first. If `coldread-chat` is installed, the script skips that line, because both together load the rules twice. It also warns about copies of coldread that would load next to the plugin, such as one made by `install.sh`. To use another folder, clone there and run the script with `COLDREAD_DIR` set to that folder.
-
-Claude Code loads a plugin from a local marketplace straight from the clone at every session start. So a `git pull` or an edit in the clone applies from the next session, or after `/reload-plugins`. Running the script again also works: it pulls, then checks the rest of the setup.
-
-## Tune the Vale checks
-
-The rules live in `plugins/coldread/skills/write/vale/`. The `.vale.ini` config lints English with the rules in `styles/Write/`. The `pl.ini` config lints Polish with the rules in `styles/WritePL/` and eight of the English ones, such as `SessionLabels`, which flags labels like `Phase A`. The skill runs both through `lint.sh`. For text in another language, `/coldread:write` skips linting and says so.
-
-- **Acronyms**: add the ones every reader of yours knows to `exceptions` in `styles/Write/Acronyms.yml` or `styles/WritePL/Acronyms.yml`, in quotes. YAML reads an unquoted `NULL` or `YES` as a value, which silently disables the rule. Terms that only one project's readers know belong in that project's `.coldread/` folder, from step 3 of the setup.
-- **A noisy rule**: change its `level:` to `suggestion`, which the skill treats as a hint rather than something to fix, or delete its file.
-
-Your edits apply only when the plugin runs from your clone, as set up in the section above.
+One person wrote the rules, the cases and the checks, and a model does the grading, so treat this as a first signal. [docs/results.md](docs/results.md) has every run and its limits, plus three blind comparisons of answers by that person. [docs/evals.md](docs/evals.md) shows how to run the evals yourself.
 
 ## Claude.ai and ChatGPT
 
 Both limit the length of custom instructions, so [`rules/answering-nano.md`](rules/answering-nano.md) holds the same rules in under 1,000 characters. In Claude.ai, paste it with your About me section into "Instructions for Claude" under Settings, General. That field also covers Cowork. In ChatGPT, paste both into custom instructions.
 
-## Without the plugin system
+## More in docs/
 
-`./install.sh user` copies the plugin into `~/.claude/skills/coldread`. Claude Code 2.1.157 and later load such a folder as a plugin in every session, with the same commands and subagent. `./install.sh project /path/to/repo` does the same for one repository, so the team gets it through git.
-
-## OpenCode
-
-coldread also runs in OpenCode 2. Set it up from a clone:
-
-```bash
-git clone https://github.com/patrykwiener/coldread ~/Code/coldread && ~/Code/coldread/scripts/setup-opencode.sh
-```
-
-The script links the skills, the cold reader and the commands from the clone into `~/.config/opencode`. It also copies the chat rules from `coldread-chat`, the ten rules for every answer, into `~/.config/opencode/AGENTS.md` between two marker lines. Run it with `--no-chat` to leave `AGENTS.md` alone, with `--no-pull` to set up the clone as it is, or with `--uninstall` to remove everything it added. If you installed coldread's write skill, cold reader or `/write` command by hand before, the script moves those files to `~/.config/opencode/coldread-backups/`, because both copies would load. Files of yours with other contents stay. At the end, the script runs `opencode reload`.
-
-To update, run the script again. It runs `git pull --ff-only` in the clone. When the pull brings new commits, the script starts over from the new version, so a skill added upstream gets its link too. Then it refreshes the copy of the chat rules and reloads OpenCode. If the pull fails, for example offline or because the clone holds commits of your own, the script stops and suggests `--no-pull`. A branch without an upstream, such as one you work on, is set up without a pull.
-
-| In Claude Code | In OpenCode |
-|---|---|
-| `/coldread:write`, `/coldread:reply`, `/coldread:plain` | `/coldread/write`, `/coldread/reply`, `/coldread/plain` |
-| the `coldread:cold-reader` subagent | the `cold-reader` subagent |
-| About me and How I write in `~/.claude/CLAUDE.md` | the same sections in `~/.config/opencode/AGENTS.md` |
-| a Writing section in a project's `CLAUDE.md` | the same section in the project's `AGENTS.md` |
-
-OpenCode 2 gives every agent the global and the project's `AGENTS.md`, so its cold reader may know names from those files that your reader does not. `/coldread/write` says so in its report. The evals run in Claude Code only.
-
-For contributors: `scripts/build-opencode.py` generates the `opencode/` folder from `plugins/coldread`, and `scripts/check.sh` fails when that folder is out of date. The folder is in git, so users never run the build.
-
-## Run the evals
-
-```bash
-claude plugin eval plugins/coldread-chat --allow-tools Write --judge-model sonnet
-claude plugin eval plugins/coldread --allow-tools Write Bash --judge-model sonnet
-```
-
-The chat suite has 14 cases, seven of them in Polish, and the write suite has 11. Each case runs 3 times with the plugin and 3 times without it by default. Results go to `plugins/<name>/evals/results/`, which git ignores. Install Vale before you run the write suite, or the skill skips its lint step.
-
-Sonnet judges because Haiku failed texts that met every condition of a grader, as [docs/results.md](docs/results.md) shows. As a judge, Sonnet costs about $0.04 per run. A condition that a pattern can check, such as a local path or a date in the text, uses a `regex` grader. That grader reads the file the case asks Claude to save, so no judge votes on it.
-
-If every run stops at once with an error about the Docker credential store, the Bash sandbox refused to start because `~/.docker` holds a symbolic link. Run the write suite with `--allow-tools Write` only. It then measures the skill without its shell steps: the word count and the lint.
+- [docs/opencode.md](docs/opencode.md) sets coldread up in OpenCode 2 and maps its commands and settings.
+- [docs/clone.md](docs/clone.md) installs coldread from a clone, so you can edit the skill, its checks or the chat rules, or keep several computers on one version. It also covers an install without a marketplace.
+- [docs/vale.md](docs/vale.md) shows how to add the acronyms your readers know, or quiet a noisy Vale rule.
+- [docs/evals.md](docs/evals.md) runs the evals with `claude plugin eval`.
+- [docs/results.md](docs/results.md) has every eval run so far and its limits.
 
 ## Related work
 

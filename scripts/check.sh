@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run before a commit: the two copies of the answering rules must match,
 # the manifests must validate, the OpenCode build must be current, and the
-# README must pass our own Vale rules.
+# README and the user docs must pass our own Vale rules.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 cmp -s rules/answering.md plugins/coldread-chat/rules/answering.md || {
@@ -10,7 +10,7 @@ for p in . plugins/coldread plugins/coldread-chat; do claude plugin validate "$p
 python3 scripts/build-opencode.py --check
 for s in install.sh scripts/*.sh plugins/coldread/skills/write/facts.sh plugins/coldread/skills/write/vale/lint.sh; do bash -n "$s"; done
 if command -v vale >/dev/null 2>&1; then
-  vale --config plugins/coldread/skills/write/vale/.vale.ini README.md
+  vale --config plugins/coldread/skills/write/vale/.vale.ini README.md docs/clone.md docs/evals.md docs/opencode.md docs/vale.md
 else
   echo "vale not found, README lint skipped"
 fi

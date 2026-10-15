@@ -1,6 +1,6 @@
 # An example rule: replace the names with your own products. Do not list a
-# name that this rule enforces in accept.txt: Vale then accepts every spelling
-# of it, and the rule never fires.
+# name that this rule enforces in accept.txt: Vale then accepts it in any
+# letter case, and the rule no longer catches a variant such as Payout Api.
 extends: substitution
 message: "Write the product name as '%s', not '%s'."
 level: warning
