@@ -194,7 +194,7 @@ One person wrote the rules, the cases and the checks, and a model does the gradi
 
 ## Claude.ai and ChatGPT
 
-Both limit the length of custom instructions, so [`rules/answering-nano.md`](rules/answering-nano.md) holds the same rules in under 1,000 characters. In Claude.ai, paste it with your About me section into "Instructions for Claude" under Settings, General. That field also covers Cowork. In ChatGPT, paste both into custom instructions.
+For their custom instructions, [`rules/answering-nano.md`](rules/answering-nano.md) holds the same rules in under 1,000 characters. In Claude.ai, paste it with your About me section into "Instructions for Claude" under Settings, General. In the new Claude experience, that field also covers Cowork. In ChatGPT, paste both into custom instructions.
 
 ## More in docs/
 

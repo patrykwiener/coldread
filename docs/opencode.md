@@ -1,6 +1,6 @@
 # coldread in OpenCode
 
-coldread also runs in OpenCode 2, set up from a clone with one script. This page covers that setup, its updates, and where each command and setting lives in OpenCode. What each setting does, and which one wins, is in [How configuration works](../README.md#how-configuration-works) in the README.
+coldread also runs in OpenCode 2, set up from a clone with one script. OpenCode 2 installs with `npm i -g @opencode/cli` or `brew install anomalyco/tap/opencode-v2`, while the older `opencode-ai` package is still OpenCode 1. This page covers that setup, its updates, and where each command and setting lives in OpenCode. What each setting does, and which one wins, is in [How configuration works](../README.md#how-configuration-works) in the README.
 
 ## Set it up
 
@@ -29,7 +29,7 @@ The settings go into `AGENTS.md` files where Claude Code uses `CLAUDE.md`. The R
 
 A `.coldread/` folder with a project's terms and sample texts, from [step 3](../README.md#3-optional-share-your-projects-terms-and-texts) of the setup, works the same in both tools.
 
-OpenCode 2 gives every agent the global and the project's `AGENTS.md`, so its cold reader may know names from those files that the person you write for does not. `/coldread/write` says so in its report. coldread's [evals](evals.md) run in Claude Code only.
+OpenCode 2 gives every agent the global `AGENTS.md` and every `AGENTS.md` from the project's folder up to your home folder. So its cold reader may know names from those files that the person you write for does not. `/coldread/write` says so in its report. coldread's [evals](evals.md) run in Claude Code only.
 
 ## For contributors
 
