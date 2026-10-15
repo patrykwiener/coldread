@@ -8,7 +8,7 @@ If the user's instructions describe how they write review comments, as in a `## 
 
 ## The default shape
 
-A comment holds one problem in at most three sentences: a label in the text's language, such as **Fix:** for a required change or **Question:** for something the author must answer, then what is wrong and why it matters, and the fix as a `suggestion` block when it is a code change. Comment only where the author must change or answer something. A nice-to-have, a future idea and your evidence stay in the report for the user. On a plan or a proposal, comment on its decisions, not on implementation detail.
+A comment holds one problem in at most three sentences: a label in the text's language, such as **Fix:** for a required change or **Question:** for something the author must answer, then what is wrong and why it matters, and the fix as a `suggestion` block when it is a code change. Apart from that one-word label, a comment never opens with a phrase and a colon, such as "Checked against live Fibery: five of six…". It states the claim as a sentence and joins the reason with "because" or "so". Comment only where the author must change or answer something. A nice-to-have, a future idea and your evidence stay in the report for the user. On a plan or a proposal, comment on its decisions, not on implementation detail.
 
 The review summary has about three sentences: what is good, what must happen before merging, and a follow-up only if some work must happen after the merge. A nice-to-have is not such a follow-up.
 

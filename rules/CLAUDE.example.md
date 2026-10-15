@@ -48,7 +48,7 @@ A reviewer who keeps comments short and ends on a question:
 ```markdown
 ## How I write
 
-Review comments: one or two plain paragraphs, median 30 words, never over 70. No headings, lists, bold or labels such as nit: or Fix:; the tone carries how serious it is. Open on the concrete thing in backticks and what it actually does, cite file.py:42 inline, and end on a question or a proposal, such as "wdyt?" or "Split it out?". A real defect gets "Please ..."; a naming idea gets "how about ...?". A reply on my own pull request says what changed and nothing else.
+Review comments: one or two plain paragraphs, median 30 words, never over 70. No headings, lists, bold, labels such as nit: or Fix:, or a phrase and a colon in front of the point; the tone carries how serious it is. Open on the concrete thing in backticks and what it actually does, cite file.py:42 inline, and end on a question or a proposal, such as "wdyt?" or "Split it out?". A real defect gets "Please ..."; a naming idea gets "how about ...?". A reply on my own pull request says what changed and nothing else.
 Chat messages: friendly and short, the ask in the first sentence, then the link it needs.
 ```
 

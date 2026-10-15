@@ -1,0 +1,15 @@
+extends: existence
+message: "'%s' opens with a phrase and a colon. Make the claim its own sentence and join the reason with 'because' or 'so'."
+level: warning
+nonword: true
+# Not `sentence`: that scope includes headings, and fixed headings such as
+# OpenSpec's `### Requirement:` must stay. Sentence starts are matched by the
+# pattern instead: the start of a line, or the space after . ! or ?.
+scope: ~heading
+# Two or more words and a colon in front of the point, as in "Checked against
+# live Fibery: five of six…", read as a headline. A one-word label such as
+# "Fix:" is not flagged, because the default review shape in channels/review.md
+# uses it. A colon later in a long sentence, a colon that ends a sentence before
+# a list, code, a URL and a time are not flagged either.
+tokens:
+  - '(?m)(?:^|(?<=[.!?]\s))[^\s:`{}\[\]][^\s:.!?`{}\[\]]*\s[^:.!?`\n{}\[\]]{0,58}:(?=\s)'

@@ -801,3 +801,13 @@ Each grader failed its own kind of unmarked claim in 6 of 6 judgements, and none
 | write-runbook-pl | 100% | 65% |
 
 Without the skill, 3 of 5 PR descriptions state a production estimate as fact, and 3 of 5 Polish runbooks keep the history.
+
+## 2026-10-14: a phrase and a colon as an opener, not measured yet
+
+Three review comments written in a user's voice were rejected because each opened with a phrase and a colon, such as "Checked against live Fibery: five of six…", although every check passed. Vale reported nothing, the cold reader found no blocker, and `no-labels-or-bold` looks only for bold and one-word labels. The default review shape seeds the pattern with a label and a colon, and a model that drops the label for a user who forbids labels keeps the colon.
+
+- `Write/ColonLead` and `WritePL/ColonLead` flag two or more words and a colon at the start of a sentence, as a warning. A one-word label such as "Fix:" passes, because the default review shape uses one. Headings are skipped, so fixed headings such as OpenSpec's `### Requirement:` stay. A check with `lint.sh` in both languages on sample texts flags the three rejected openers and a Polish "Twoje pytania:". It leaves alone one-word labels, code spans such as `Pull: FAILED`, URLs, times, a colon late in a long sentence and a colon before a list.
+- `channels/review.md` says a comment never opens with a phrase and a colon, and the reviewer example in `rules/CLAUDE.example.md` lists it next to labels.
+- `write-review-voice-en` gets a regex grader, `no-colon-opener`, with the same pattern. It was checked in Python and in Node on four sample files, and no eval has run with it.
+
+A run of `write-review-voice-en`, 5 runs per arm, would show whether the rule changes what the skill writes.
