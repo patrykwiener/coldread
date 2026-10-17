@@ -811,3 +811,74 @@ Three review comments written in a user's voice were rejected because each opene
 - `write-review-voice-en` gets a regex grader, `no-colon-opener`, with the same pattern. It was checked in Python and in Node on four sample files, and no eval has run with it.
 
 A run of `write-review-voice-en`, 5 runs per arm, would show whether the rule changes what the skill writes.
+
+## 2026-10-17: deeper chat rules, in a simulated Claude.ai and in Claude Code
+
+New chat rules make Claude.ai answer a how or why question in full and end with ways to go deeper. One step remains before a merge, the maintainer's blind reading in Claude.ai. In a simulation of Claude.ai on Sonnet 5.5, answers under the old nano rules had a median of 196 words, and 1 of 18 ended with ways to go deeper. Under the new full rules, the median was 430 words, and 17 of 18 did. In Claude Code, the chat suite rose from 84% to 90%, and no grader fell by more than one run of three. All eight conditions of a decision rule written before the results hold, so the recommendation is to merge if the blind reading agrees.
+
+The change answers the maintainer's report that Claude.ai, with the nano rules in "Instructions for Claude", answered in two or three paragraphs and never said where to go next.
+
+### What changed in the rules
+
+`rules/answering.md` grew from 575 to 1,274 words, and the nano rules from 992 to 1,488 characters. Claude.ai now gets the full rules in "Instructions for Claude", where the nano used to go, and the nano is left for ChatGPT's field of 1,500 characters. The changes:
+
+- Before the first sentence, Claude settles what the user must know, decide or do, and picks a shape for the kind of question. An explanation gets what the thing does, its terms with an example each, one case walked from start to end, and what it means for the user. A choice gets the pick and its reason, one table of what each option gives, costs and risks, and what would change the pick. A cause and a how-to get shapes of their own, and a question that one sentence answers gets one to three sentences.
+- Depth comes from more parts under headings, at most five, with at most four points in each part.
+- An explanation or advice ends with two or three ways to go deeper, one sentence each. When one fact about the user would change the advice, Claude also states its assumption and asks that one question.
+- Claude marks a claim only when the user would act on it and Claude cannot vouch for it.
+- The rules say that they count as the user asking for headings, lists and tables, and that a question about what, how or why asks for the whole topic. Claude.ai's own prompt keeps lists out of explanations "unless the person asks", and lets Claude match "its effort to the ask".
+
+Two subagents reviewed the first draft, one on prompt wording and one on the evaluation. Most of the wording above, and most of the new graders, came from those reviews.
+
+### A simulated Claude.ai
+
+`claude plugin eval` keeps Claude Code's system prompt, and under that prompt the old rules already gave a median of 397 words in 132 recorded answers. So the suite could not show the problem. `scripts/claudeai-sim.py` replaces Claude Code's system prompt with the newest Claude.ai prompt that Anthropic published for the model. For Sonnet 5.5 that prompt is dated 7 October 2026, and for Opus 5.5 it is dated 22 September 2026. The script then adds the About me note from the maintainer's `~/.claude/CLAUDE.md` and one rules file in a `userPreferences` block, and asks the question with no tools and no user settings. The rules file is the old nano, the old full rules or the new full rules. The new nano was not tested, so a merge ships it untested. That block is a guess, because Anthropic does not publish how Claude.ai passes preferences. Seven cases ran. Five come from the suite. The other two are new in it, a plain fact as a guard against bloat and a how-to question about testing a residual-current breaker. Sonnet 5.5 ran 3 times per case, and Opus 5.5 ran 2 times. Sonnet judged each grader with one vote, while the suite takes three.
+
+| Model and rules | Median words, six cases | Ends with ways to go deeper | Graders kept from before | Plain fact stays short |
+|---|---|---|---|---|
+| Sonnet 5.5, old nano | 196 | 1 of 18 | 32 of 36 | 3 of 3 |
+| Sonnet 5.5, old full rules | 309 | 1 of 18 | 31 of 36 | 3 of 3 |
+| Sonnet 5.5, new full rules | 430 | 17 of 18 | 33 of 36 | 3 of 3 |
+| Opus 5.5, old nano | 316 | 2 of 12 | 20 of 24 | 2 of 2 |
+| Opus 5.5, new full rules | 632 | 12 of 12 | 22 of 24 | 2 of 2 |
+
+The six cases leave out the plain fact, the default port of PostgreSQL, which stayed at 7 to 40 words in every arm. "Graders kept from before" counts the graders whose text did not change, such as the quizzes and answer-first. With the four graders whose text changed in this entry, Sonnet passed 39 of 48 under the new rules and 40 of 48 under the old nano. The answers changed in form too. Under the old nano, none of Sonnet's 21 answers had a heading or a table. Under the new rules, they had 3.6 headings per answer, and 6 of 21 had a table. The graders written for two of the shapes moved as well. The grader that checks for one example followed from start to end passed in 2 of 3 Sonnet runs under the new rules and in 0 of 3 under the old nano. The grader that checks for steps saying what the user should see passed in 2 of 3 against 0 of 3.
+
+What this shows and what it does not:
+
+- The simulation reproduces the complaint on Sonnet only. Opus under the old nano already wrote a median of 316 words, but it still rarely ended with ways to go deeper.
+- Real Claude.ai may differ, because it adds memory, tools and context that the simulation leaves out, and it may pass preferences in another way.
+- Deeper answers leave more trade words unexplained. For the floor screed, the terms grader passed 1 of 3 Sonnet runs under the new rules and 2 of 3 under the old nano. For the electrical case, both models failed it in every arm. Two one-sentence fixes did not help. One kept the screed at 1 of 3. The other asked Claude to list the new words before writing, and it fell to 0 of 3 and dropped the screed quiz from 3 of 3 to 1 of 3. Both were reverted, so this stays open.
+- The screed's terms grader read its own list of example terms as terms of the question, so it failed answers for "łata", which the question does not use. Its new text names jastrych and anhydryt as the question's terms, and every screed verdict here comes from the new text.
+- Opus answers under the new rules ran up to 748 words. Whether that is too long, only a reading can show.
+
+### The chat suite in Claude Code
+
+Both versions ran on the same day with the same judge, Sonnet with three votes, with the plugin only, on 16 cases at 3 runs per case. The 14 earlier cases now carry new graders, and two cases are new: the plain fact as a guard against bloat, and the how-to question. The old rules took 523 seconds and $7.19, and the new rules 621 seconds and $7.74.
+
+The suite scored 83.9% under the old rules and 89.7% under the new ones. Ways to go deeper went from 0 of 3 to 3 of 3 in four cases, and from 2 of 3 to 3 of 3 for the screed. The grader for one example followed from start to end went from 1 of 3 to 3 of 3, and so did the grader for steps that say what the user should see. Five graders fell by one run each. Two of them count at most four points, for the queue and for the kitchen handles. The other three are OAuth terms, numbers for heating, and the screed's terms under the grader's old text. guard-coding stayed correct in 3 of 3 runs, and no task report in either coding case ended with ways to go deeper. The ways-to-go-deeper graders of pl-lrv, pl-handles-verdict and en-db-connections were added after this run, so the suite has no numbers for them yet.
+
+### The graders
+
+The new graders check six things. Nine cases check for ways to go deeper, and twelve carry a regex that fails an answer showing its plan, such as an outline or the name of its shape. The two coding tasks check that no ways to go deeper follow the report. The heating case checks that subsidies are marked as possibly out of date. The screed checks for one example followed from start to end, and the database connections check for a way to confirm the cause. The two new cases bring graders of their own.
+
+The text changed for four graders in six cases. The at-most-four-points grader now counts points in each part. The database case may name one fallback cause, and its opening may state the cause in bold. The screed's terms grader names the question's terms.
+
+One grader fails in every arm. The database case names three or more causes in every answer, so the rules do not yet keep a diagnosis to the one or two causes that matter.
+
+### The decision rule
+
+The rule was written at 21:22 on 17 October, before the first grader ran. It has eight conditions, and all of them hold:
+
+1. On Sonnet, the old nano gave a median of 196 words, under the limit of 250, so the simulation reproduces the complaint.
+2. Ways to go deeper passed 17 of 18 Sonnet runs under the new full rules, where the rule asked for at least 12. Under the old nano they passed 1 of 18, where the rule allowed at most 6.
+3. The plain fact stayed at most 150 words, with no headings and no ways to go deeper, in 5 of 5 runs on both models.
+4. The graders kept from before passed 33 of 36 under the new full rules and 32 of 36 under the old nano, where the rule allowed a drop of up to 5 points.
+5. No answer under the new rules showed its plan.
+6. In Claude Code, guard-coding passed its correctness and file graders in 3 of 3 runs.
+7. No grader that existed before this change fell by two or more runs of three.
+8. Both coding cases passed the grader that forbids ways to go deeper after a task report in 3 of 3 runs.
+
+After these, the rule asks for the maintainer's blind reading. The maintainer picks four of their own questions that ask how something works, why it happens or which option to take, because a plain fact stays short under both versions. They ask each question in Claude.ai twice on the same model, once with the old nano and once with the new full rules in "Instructions for Claude". A page then shows the two answers of each pair in random order, as in the earlier blind rounds, so the maintainer does not know which rules wrote which answer. The new rules pass if the maintainer prefers them in at least 3 of the 4 pairs. That reading has not happened.
+
+The simulation cost $15.21 at list price, including the two reverted fixes, plus about $0.40 for answers discarded after a change of wording. The suite cost $14.93, so the measurements cost about $30.50 in all.
