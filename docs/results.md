@@ -864,7 +864,7 @@ The new graders check six things. Nine cases check for ways to go deeper, and tw
 
 The text changed for four graders in six cases. The at-most-four-points grader now counts points in each part. The database case may name one fallback cause, and its opening may state the cause in bold. The screed's terms grader names the question's terms.
 
-One grader fails in every arm. The database case names three or more causes in every answer, so the rules do not yet keep a diagnosis to the one or two causes that matter.
+One grader fails in every arm. The database case names three or more causes in every answer, so the rules do not yet keep a diagnosis to the one or two causes that matter. The answers name the main cause first, with the numbers that prove it, and the maintainer finds the other suspects useful. The next step is to let the rule allow other causes after the main one, each with its check. The grader would then fail only causes listed side by side without a verdict. Measuring this case again in the suite and in the simulation costs about $1.
 
 ### The decision rule
 
