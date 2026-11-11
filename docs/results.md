@@ -882,3 +882,110 @@ The rule was written at 21:22 on 17 October, before the first grader ran. It has
 After these, the rule asks for the maintainer's blind reading. The maintainer picks four of their own questions that ask how something works, why it happens or which option to take, because a plain fact stays short under both versions. They ask each question in Claude.ai twice on the same model, once with the old nano and once with the new full rules in "Instructions for Claude". A page then shows the two answers of each pair in random order, as in the earlier blind rounds, so the maintainer does not know which rules wrote which answer. The new rules pass if the maintainer prefers them in at least 3 of the 4 pairs. That reading has not happened.
 
 The simulation cost $15.21 at list price, including the two reverted fixes, plus about $0.40 for answers discarded after a change of wording. The suite cost $14.93, so the measurements cost about $30.50 in all.
+
+## 2026-11-11: requests for ASD-STE100, a baseline
+
+A request to rewrite a text "in ASD-STE100" changed what the text says in most rewrites, and coldread on main did not prevent it. In blind labels, coldread kept every qualifier in 4 of 12 such rewrites, plain Claude in 2 of 12, and the asd-ste100 skill, whose rules say to keep modality, in 9 of 12. A qualifier here is a word or clause that sets the strength or scope of a claim, such as "should", "only if", "likely" or "because".
+
+ASD-STE100, Simplified Technical English (STE), is a controlled English for aircraft maintenance manuals, kept by the Aerospace, Security and Defence Industries Association of Europe (ASD). It has 53 writing rules and a dictionary of about 900 approved words. The dictionary has no "should" and no "may", and offers "must" and "can" in their place. A tip from a tech lead started this test. The tip was to ask an agent for "70-80% STE", because full STE "does sometimes destroy nuance". [docs/research/simplified-technical-english.md](research/simplified-technical-english.md) has the background and the decisions.
+
+Setup: seven texts from this repository. Four are README sections, one is the limits paragraph of the 2026-10-09 entries in this file, and one is the handoff note among the skill's English style anchors (`examples-en.md`). The Polish text puts together the handoff note and the PR opening from the Polish anchors (`examples-pl.md`). Each text got a list of 8 to 10 qualifiers before any run. Three requests each asked Claude to save the result to `rewrite.md`:
+
+- "Rewrite this in ASD-STE100"
+- "Rewrite this in 70-80%-ish ASD-STE100, not strict STE"
+- "Rewrite this so a developer who is new to the project understands it on the first read", the only request for the Polish text, in Polish
+
+Plain Claude ran through an empty plugin, and the [asd-ste100 skill](https://github.com/danyuchn/asd-ste100-skill) and coldread on main ran as plugins. Each case ran twice, in Claude Code 2.1.311 with Bash allowed. Sonnet judged each rewrite against its list. Separately, one model labeller per text read all of its rewrites without knowing which tool wrote which, and marked each qualifier as kept, lost or changed, plus any other change of strength or reason. The runs cost about $26.
+
+| Request and tool | Rewrites | Every qualifier kept, by the labels | Judge passed |
+|---|---|---|---|
+| "ASD-STE100", plain Claude | 12 | 2 | 5 of 10 |
+| "70-80% STE", plain Claude | 12 | 5 | 7 of 12 |
+| "ASD-STE100", asd-ste100 skill | 12 | 9 | 8 of 12 |
+| "ASD-STE100", coldread on main | 12 | 4 | 3 of 12 |
+| "new to the project", plain Claude | 14 | 9 | 9 of 14 |
+| "new to the project", coldread on main | 14 | 12 | 10 of 14 |
+
+Two runs of plain Claude reached the cost ceiling before the judge ran.
+
+The same changes came back across the tools:
+
+- "Ask finance whether duplicates already paid should be refunded or credited" became "must we give a refund or a credit?".
+- "the script stops and suggests `--no-pull`" became "tells you to use `--no-pull`".
+- "Install from a clone when you want to edit the skill" became "if you must change the skill".
+- "X, because Y" became two sentences that no longer say that Y is why.
+
+The asd-ste100 skill avoided the first three in every rewrite.
+
+Three more checks ran on the same day:
+
+- A script that counts hedges, requirement words, negations, conditions and bounds in the original and in the rewrite raised 27 alarms, and the labellers found 6 of them real. Of the 76 rewrites, 35 changed meaning, and it caught 6 of them, because most changes swap words it does not count, such as "suggests" for "tells you to". The write skill does not use it.
+- STE's rules for procedures, such as one action per step and the condition before the command, found no break in four runbooks from `write-runbook-pl` and `write-runbook-split-en`. Two prompts from `write-prompt-handoff-en` had 7 small breaks, such as "Run it only after they say yes" right after a step that already stops and asks. The write skill does not add these rules.
+- With coldread and asd-ste100 in one plugin, asd-ste100 started on 6 of 6 STE requests, and write started on 6 of 6 requests from `write-rewrite-facts` and `write-prompt-handoff-en`. Alone, coldread started write on 11 of 12 STE requests.
+
+What this run does not show:
+
+- The texts come from this repository and follow coldread's rules, so their sentences were already short, 12 to 16 words on average.
+- Each case ran twice, and the labellers and the judge are models.
+- asd-ste100 was the only other skill tested.
+
+## 2026-11-11: keep the strength of every claim
+
+One paragraph in step 2 of the skill raised the share of "ASD-STE100" rewrites that keep every qualifier from 2 of 12 to 10 of 12. Main's 2 of 12 comes from new labels that read both versions together, while the baseline labels gave it 4 of 12. On two held-out texts the share rose from 0 of 4 to 3 of 4. Rewrites for a newcomer did not get worse.
+
+The paragraph says that a requirement, a recommendation, an option and a possibility keep their strength, as in "should" stays "should", not "must". A condition or a limit stays on the same action, and a reason stays a reason. This also holds when the user asks for Simplified Technical English or plain English. The skill then follows the style's sentence rules, but keeps the original word where the style's word list would change a strength, and says so in the report.
+
+Setup as in the baseline entry above, plus two held-out texts whose lists were written before the run. One holds the About me and How I write paragraphs of the README. The other holds two paragraphs of `docs/research/document-structure.md` with sourced and unverified claims. Main and the version with the rule rewrote the held-out texts in the same run. "ASD-STE100" requests ran twice per text, and rewrites for a newcomer once. New labellers read main's baseline rewrites and the new ones together, blind. The runs cost $10.
+
+| Request and texts | main | With the rule | Judge, main to rule |
+|---|---|---|---|
+| "ASD-STE100", the six baseline texts | 2 of 12 | 10 of 12 | 3 to 10 of 12 |
+| "ASD-STE100", two held-out texts | 0 of 4 | 3 of 4 | 1 to 3 of 4 |
+| "new to the project", seven texts | 10 of 14 | 6 of 7 | 10 of 14 to 5 of 7 |
+
+For the finance question above, the skill wrote "should the company refund the money or give a credit?", and its report said that "should" stays "should" and that "the company" was its own addition.
+
+What to keep in mind:
+
+- The skill did not start in 4 of the 16 "ASD-STE100" runs with the rule, and Claude rewrote the text without it. In the 12 runs where it started, 11 kept every qualifier. The one held-out rewrite that failed came from a run without the skill.
+- The same rewrites from main got 4 of 12 and 12 of 14 in the baseline labels, and 2 of 12 and 10 of 14 in these, so two labellers differ by about two texts. The rule's gain is eight texts.
+- Rewrites for a newcomer add about 1.3 claims per text in both versions, such as "Because these are links, OpenCode always uses the files in your clone". The rule does not address that.
+
+## 2026-11-11: STE requests reach the skill, and three older cases hold
+
+With "or to rewrite it in plain English or in Simplified Technical English (ASD-STE100, STE), also partly" added to write's description, the skill started on 12 of 12 STE requests. With the old description it started on 11 of 12 in the same run. It started on none of 6 questions about STE. Three older cases passed every grader on main and on the version with the rule and the new description.
+
+Setup: four STE requests on four baseline texts, two of them texts on which the skill had not started in the run before. They asked "Rewrite this in ASD-STE100", "Rewrite this in Simplified Technical English", "Rewrite this in 70-80%-ish STE", and in Polish "Przepisz to w ASD-STE100". Two questions asked what ASD-STE100 is and which rules it has for procedures, without asking for a rewrite. Each request ran 3 times with at most 3 turns, which is enough to see which skill starts. The runs cost $12.49.
+
+| Request | Old description | New description |
+|---|---|---|
+| Four STE requests | 11 of 12 | 12 of 12 |
+| Two questions about STE | 0 of 6 | 0 of 6 |
+
+The gain is one run in twelve, so it is within the noise. Over this run and the one before, the old description started the skill on 23 of 28 STE requests. The new description stays because it caused no false start and takes 101 of the 1,024 characters a description may have.
+
+With the asd-ste100 skill in the same plugin, write now took 2 of 6 STE requests, where it had taken none in the baseline. asd-ste100 still started on 3 of 3 requests for "ASD-STE100" and on 1 of 3 for "70-80%-ish ASD-STE100". Write started on 6 of 6 requests from `write-rewrite-facts` and `write-prompt-handoff-en`.
+
+`write-pr-claims-en`, `write-design-notes-en` and `write-review-voice-en` ran twice each on main and on the version with the rule and the new description. All 19 of their graders passed in 2 of 2 runs in both versions. Two runs per version show only a large regression, and there was none.
+
+## 2026-11-11: a held-out case for the strength rule
+
+The new case `write-rewrite-ste-en` asks for a short ops note "in ASD-STE100". The note tells an on-call engineer what to do when a nightly export job fails: rerun it by hand, but not during the backup window. With the skill, every rewrite kept "should", "may", "suggests" and "we think", and the calibrated judge passed 3 of 5. Without it, 4 of 5 rewrites made the rerun an obligation with "must", and 5 of 5 turned "the script suggests `--resume`" into "shows" or "tells you to use". The judge passed none of them.
+
+The note and its list of nine qualifiers were written before any run. The list covers a possibility ("may fail"), a reason ("because it retries only twice") and a recommendation ("should rerun"). It also covers a prohibition with an exception and a limit ("unless the export is already more than an hour late"), a suggestion, an option ("can ask") and a belief ("we think"). The case has three graders:
+
+- `skill-fired` checks that write started.
+- `strength-kept` checks the nine qualifiers in `rewrite.md`.
+- `strength-reported` reads only the reply to the user. It checks that the reply says which words Claude kept although the ASD-STE100 dictionary does not approve them, such as "may", "should" and "suggests".
+
+Before the run, `strength-kept` judged six hand-labelled texts in `plugins/coldread/evals-calibration/ste-*`. One is a faithful rewrite. Each of the other five makes one change. "Should" becomes "must", the exception is gone, the belief reads as a fact, the suggestion becomes an instruction, or the reason no longer reads as the reason. Every text got its label in 3 of 3 runs in two rounds, 36 judgements in all.
+
+| Grader | With skill | Without |
+|---|---|---|
+| `strength-kept` | 3 of 5 | 0 of 5 |
+| `strength-reported` | 5 of 5 | 3 of 5 |
+| `skill-fired` | 5 of 5 | not scored |
+
+The judge votes three times on each run. It failed two of the skill's rewrites in 3 of 3 votes, and I could not find the change it saw. Both kept every qualifier in my reading, and Sonnet, the judge the suite uses, passed both when it got the same grader text and the file in a plain prompt. One more run with the skill passed with 2 of 3 votes. These three runs, and no other, describe `--resume` as "the job does not write the files that are already written", so that wording may be what the judge stumbles on. If the grader keeps failing faithful rewrites like these, it should be split into narrow graders, as the claims graders were on 2026-10-13.
+
+The calibration cost $3.00 and the case $2.69.
